@@ -1,0 +1,6 @@
+<resources>
+
+    <bool name="tablet">false</bool>
+    <bool name="portrait_only">true</bool>
+
+</resources>

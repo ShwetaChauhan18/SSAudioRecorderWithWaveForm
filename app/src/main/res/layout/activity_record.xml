@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    tools:context=".record.RecordNewActivity"
+    tools:ignore="RtlHardcoded,ContentDescription">
+
+    <TextView
+        android:id="@+id/toolbarTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center"
+        android:padding="@dimen/_10sdp"
+        android:text="@string/txt_record_sound"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/md_blue_gray_900"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarTitle">
+
+        <com.wave.audiorecording.audioplayer.WaveformView
+            android:id="@+id/record"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_200sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@color/md_blue_gray_300"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbarTitle" />
+
+        <TextView
+            android:id="@+id/placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/poppins_medium"
+            android:text="@string/record_placeholder"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintBottom_toBottomOf="@+id/record"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbarTitle" />
+
+        <LinearLayout
+            android:id="@+id/relativeLayoutTrim"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_240sdp"
+            android:background="@color/md_blue_gray_300"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/progressbarTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="@string/loading_placeholder"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_15ssp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <com.wave.audiorecording.audioplayer.trim.WaveformViewTrim
+                    android:id="@+id/audioWaveform"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_85sdp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginRight="@dimen/_10sdp" />
+
+                <com.wave.audiorecording.audioplayer.trim.MarkerView
+                    android:id="@+id/markerStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/txt_start_marker"
+                    android:nextFocusDown="@+id/markerEnd"
+                    android:paddingStart="@dimen/_3sdp"
+                    android:paddingEnd="@dimen/_3sdp"
+                    android:visibility="invisible"
+                    app:srcCompat="@drawable/ic_left_trim" />
+
+                <TextView
+                    android:id="@+id/txtStartPosition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_time"
+                    android:textColor="@color/colorTextGray"
+                    android:textSize="@dimen/_8ssp"
+                    android:visibility="gone" />
+
+                <com.wave.audiorecording.audioplayer.trim.MarkerView
+                    android:id="@+id/markerEnd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/txt_end_marker"
+                    android:nextFocusUp="@+id/markerStart"
+                    android:nextFocusDown="@+id/info"
+                    android:paddingStart="@dimen/_3sdp"
+                    android:paddingEnd="@dimen/_3sdp"
+                    android:visibility="invisible"
+                    app:srcCompat="@drawable/ic_right_trim" />
+
+                <TextView
+                    android:id="@+id/txtEndPosition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_time"
+                    android:textColor="@color/colorTextGray"
+                    android:textSize="@dimen/_8ssp"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+    <ImageButton
+        android:id="@+id/btn_record_close"
+        android:layout_width="@dimen/bottom_pnl_small_btn_size"
+        android:layout_height="@dimen/bottom_pnl_small_btn_size"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/delete"
+        android:padding="@dimen/spacing_normal"
+        android:scaleType="center"
+        app:srcCompat="@drawable/ic_close"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_record"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_record" />
+
+
+    <ImageButton
+        android:id="@+id/btn_import"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginEnd="@dimen/_15sdp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@null"
+        android:padding="@dimen/spacing_normal"
+        app:srcCompat="@drawable/ic_gallery"
+        android:tint="@color/md_blue_gray_700"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_record"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_record" />
+
+    <TextView
+        android:id="@+id/txt_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginStart="@dimen/spacing_huge"
+        android:layout_marginEnd="@dimen/spacing_huge"
+        android:layout_marginBottom="@dimen/spacing_normal"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/md_blue_gray_900"
+        android:textSize="@dimen/text_large"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/btn_record"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Rec-2019.12.30 12:12:23"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/lnr_layout_record"
+        android:layout_width="@dimen/_105sdp"
+        android:layout_height="@dimen/_56sdp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/_30sdp"
+        android:animateLayoutChanges="true"
+        android:background="@drawable/bg_tab_layout"
+        android:orientation="horizontal"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/btn_record_stop"
+            android:layout_width="@dimen/_45sdp"
+            android:layout_height="@dimen/_45sdp"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/_5sdp"
+            app:srcCompat="@drawable/ic_pause_blue" />
+
+        <TextView
+            android:id="@+id/txt_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/text_primary_light"
+            android:textSize="@dimen/_15ssp"
+            android:textStyle="bold"
+            tools:text="00:00" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/btn_record_pause"
+        android:layout_width="@dimen/_45sdp"
+        android:layout_height="@dimen/_45sdp"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/_18sdp"
+        app:srcCompat="@drawable/ic_pause_grey"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/lnr_layout_record"
+        app:layout_constraintStart_toEndOf="@+id/lnr_layout_record"
+        app:layout_constraintTop_toTopOf="@+id/lnr_layout_record" />
+
+    <TextView
+        android:id="@+id/btn_save"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:background="@drawable/bg_tab_layout_blue"
+        android:contentDescription="@null"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center"
+        android:padding="@dimen/_10sdp"
+        android:text="Save"
+        android:textColor="@color/dark_white"
+        android:textSize="@dimen/_13ssp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_play"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_play"
+        app:layout_constraintTop_toTopOf="@+id/btn_play" />
+
+    <LinearLayout
+        android:id="@+id/btn_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="@dimen/_30sdp"
+        android:background="@drawable/bg_tab_layout_green"
+        android:orientation="horizontal"
+        android:padding="@dimen/_18sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_save"
+        app:layout_constraintStart_toEndOf="@+id/btnDeleteRecord">
+
+        <ImageButton
+            android:id="@+id/img_button_play"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@null"
+            app:srcCompat="@drawable/ic_play"
+            android:tint="@color/white" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btnDeleteRecord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:background="@drawable/btn_ripple_effect_delete"
+        app:srcCompat="@drawable/ic_delete"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_play"
+        app:layout_constraintEnd_toStartOf="@+id/btn_play"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_play" />
+
+    <ImageButton
+        android:id="@+id/btn_record"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="@dimen/_55sdp"
+        android:layout_height="@dimen/_55sdp"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/_30sdp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/form_circle_button"
+        android:contentDescription="@string/recording"
+        android:scaleType="center"
+        app:srcCompat="@drawable/fm_audio"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">AudioWavesRecording</string>
+
+    <string name="btn_save">Save</string>
+    <string name="btn_yes">Yes</string>
+    <string name="btn_ok">Ok</string>
+    <string name="btn_no">No</string>
+    <string name="btn_play">Play</string>
+    <string name="btn_deny">Deny</string>
+
+    <string name="record_moved_into_trash">Record moved to trash</string>
+
+    <string name="error_unknown">Unexpected error</string>
+    <string name="error_cant_create_file">Can\'t create file</string>
+    <string name="error_invalid_output_file">Invalid output file</string>
+    <string name="error_file_exists">File with this name is already exists!</string>
+    <string name="error_failed_to_rename">Failed to rename record!</string>
+    <string name="error_failed_to_init_recorder">Failed to init Recorder</string>
+    <string name="error_failed_to_init_player">Failed to init Player</string>
+    <string name="error_player_data_source">Player can\'t read file</string>
+    <string name="error_unable_to_read_sound_file">Unable to read sound file</string>
+    <string name="error_permission_denied">Permission denied</string>
+    <string name="error_process_waveform">Can\'t draw waveform</string>
+    <string name="error_no_available_space">No available space!</string>
+    <string name="error_on_recording">Recording error!</string>
+
+    <string name="txt_record_sound">Record Sound</string>
+    <string name="record_placeholder">Tap button to start recording</string>
+    <string name="loading_placeholder">Loading....</string>
+    <string name="start_time">00.00</string>
+    <string name="txt_start_marker">start marker</string>
+    <string name="delete">Delete</string>
+
+    <string name="txt_end_marker">end marker</string>
+
+    <string name="delete_record">Move to trash %s?</string>
+    <string name="warning">Warning!</string>
+    <string name="delete_this_record">Delete this record?</string>
+    <string name="need_write_permission">The app requires permission to access to the public storage. If not allowed, records will be stored in the app’s private directory</string>
+    <string name="saving_placeholder">Saving..</string>
+
+    <string name="recording">Recording: %s</string>
+    <string name="recording_is_on">Recording is ON</string>
+    <string name="recording_progress">Recording&#8230;</string>
+    <string name="recording_paused">Paused</string>
+    <string name="playback">Playback: %s</string>
+</resources>
