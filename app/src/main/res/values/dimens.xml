@@ -1,0 +1,140 @@
+<resources xmlns:tool="http://schemas.android.com/tools">
+
+    <dimen name="dash_item_logo_width">80dp</dimen>
+    <dimen name="dash_item_logo_height">50dp</dimen>
+    <dimen name="dash_item_margin">4dp</dimen>
+
+    <dimen name="dash_header_height">80dp</dimen>
+    <dimen name="dash_header_background_height">40dp</dimen>
+    <dimen name="dash_header_recycler_padding">86dp</dimen>
+    <dimen name="dash_header_margin">12dp</dimen>
+    <dimen name="dash_welcome_name_size">23sp</dimen>
+    <dimen name="dash_welcome_date_size">13sp</dimen>
+    <dimen name="dash_weather_icon_size">56dp</dimen>
+    <dimen name="dash_weather_temp_size">30sp</dimen>
+
+    <dimen name="kiosk_radio_item_size">80dp</dimen>
+
+    <dimen name="project_item_size">72dp</dimen>
+    <dimen name="project_item_radius">24dp</dimen>
+    <dimen name="project_item_icon_size">36dp</dimen>
+
+    <dimen name="separator_height">1dip</dimen>
+    <dimen name="toolbar_close_margin">8dip</dimen>
+
+    <dimen name="grid_margin">12dip</dimen>
+    <dimen name="grid_gallery_margin">6dip</dimen>
+    <dimen name="fill_margin">12dip</dimen>
+
+    <dimen name="login_image_default">90dip</dimen>
+    <dimen name="login_image_smaller">53dip</dimen>
+    <dimen name="login_button_default">125dip</dimen>
+    <dimen name="login_button_smaller">50dip</dimen>
+    <dimen name="login_lost_default">179dip</dimen>
+    <dimen name="login_cancel_smaller">14dip</dimen>
+    <dimen name="login_footer_default">50dip</dimen>
+    <dimen name="login_footer_smaller">40dip</dimen>
+    <dimen name="login_footer_fontsize">15sp</dimen>
+
+    <dimen name="form_border">2dip</dimen>
+
+    <dimen name="search_margin">12dip</dimen>
+
+    <dimen name="freetext_small">10sp</dimen>
+    <dimen name="freetext_medium">17sp</dimen>
+    <dimen name="freetext_large">24sp</dimen>
+
+    <dimen name="maps_height">330dip</dimen>
+    <dimen name="maps_padding">42dip</dimen>
+
+    <dimen name="avatar_max">205dip</dimen>
+
+    <dimen name="generic_item_height">30dip</dimen>
+    <dimen name="generic_title_margin">12dip</dimen>
+
+    <dimen name="table_cell_padding">12dip</dimen>
+    <dimen name="table_cell_signature_padding">10dip</dimen>
+    <dimen name="table_cell_height">80dip</dimen>
+    <dimen name="table_cell_width">160dip</dimen>
+
+    <dimen name="preview_size">50dip</dimen>
+
+    <dimen name="draw_width">8dip</dimen>
+    <dimen name="draw_color_first">60dip</dimen>
+    <dimen name="draw_color_nth">50dip</dimen>
+    <dimen name="draw_color_margin">10dip</dimen>
+    <dimen name="draw_text_size">14sp</dimen>
+    <dimen name="draw_text_padding">4dip</dimen>
+
+    <dimen name="tutorial_toolbox_width">174.5dip</dimen>
+    <dimen name="tutorial_toolbox_height">227dip</dimen>
+
+    <dimen name="tutorial_project_width">331.3dip</dimen>
+    <dimen name="tutorial_project_height">229.3dip</dimen>
+
+    <dimen name="tutorial_mobile_width">149.3dip</dimen>
+    <dimen name="tutorial_mobile_height">331.3dip</dimen>
+
+    <dimen name="kiosk_normal_text_size">16sp</dimen>
+    <dimen name="kiosk_large_text_size">26sp</dimen>
+    <dimen name="kiosk_middle_text_size">18sp</dimen>
+    <dimen name="kiosk_normal_margin">40dp</dimen>
+    <dimen name="kiosk_text_distance">18dp</dimen>
+    <dimen name="kiosk_large_margin">92dp</dimen>
+    <dimen name="kiosk_tablet_image_margin">402dp</dimen>
+    <dimen name="kiosk_button_size">56dp</dimen>
+
+    <dimen name="status_submitted_value_text_size">48sp</dimen>
+    <dimen name="status_title_text_size">14sp</dimen>
+    <dimen name="status_storage_label_text_size">16sp</dimen>
+    <dimen name="status_storage_circle_radius">92dip</dimen>
+    <dimen name="status_storage_circle_bar_width">18dip</dimen>
+    <dimen name="status_storage_circle_rim_width">18dip</dimen>
+
+    <dimen name="keyboard_item_size">50dip</dimen>
+    <dimen name="keyboard_item_padding">4dp</dimen>
+    <dimen name="keyboard_item_margin">4dp</dimen>
+
+    <dimen tool:override="true" name="design_fab_size_normal">68dp</dimen>
+    <dimen tool:override="true" name="design_fab_content_size">38dp</dimen>
+
+    <!--audio-->
+    <dimen name="spacing_huge">72dp</dimen>
+    <dimen name="spacing_xdouble">48dp</dimen>
+    <dimen name="spacing_double">32dp</dimen>
+    <dimen name="spacing_xnormal">24dp</dimen>
+    <dimen name="spacing_normal">16dp</dimen>
+    <dimen name="spacing_medium">12dp</dimen>
+    <dimen name="spacing_xsmall">10dp</dimen>
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_tiny">4dp</dimen>
+    <dimen name="spacing_zero">0dp</dimen>
+    <dimen name="divider">1dp</dimen>
+
+    <dimen name="text_smallest">10sp</dimen>
+    <dimen name="text_small">12sp</dimen>
+    <dimen name="text_normal">14sp</dimen>
+    <dimen name="text_medium">16sp</dimen>
+    <dimen name="text_xmedium">18sp</dimen>
+    <dimen name="text_large">20sp</dimen>
+    <dimen name="text_xlarge">24sp</dimen>
+    <dimen name="text_largest">48sp</dimen>
+
+    <dimen name="divider_height">1dp</dimen>
+
+    <dimen name="bottom_pnl_btn_size">84dp</dimen>
+    <dimen name="bottom_pnl_small_btn_size">54dp</dimen>
+    <dimen name="notification_btn">64dp</dimen>
+
+    <dimen name="gradient_radius">320dp</dimen>
+    <dimen name="waveform_height">200dp</dimen>
+    <dimen name="waveform_trim_layout_height">455dp</dimen>
+    <dimen name="item_waveform_height">80dp</dimen>
+
+    <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="toolbar_elevation">4dp</dimen>
+
+    <dimen name="panel_height">316dp</dimen>
+
+
+</resources>
