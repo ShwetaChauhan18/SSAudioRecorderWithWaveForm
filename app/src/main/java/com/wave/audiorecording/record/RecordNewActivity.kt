@@ -17,6 +17,8 @@ import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
@@ -30,6 +32,8 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import com.google.android.material.appbar.MaterialToolbar
 import com.wave.audiorecording.AudioRecordingWavesApplication
 import com.wave.audiorecording.R
 import com.wave.audiorecording.app.PlaybackService
@@ -57,21 +61,34 @@ import com.wave.audiorecording.util.ViewUtils
 import java.io.File
 import java.io.RandomAccessFile
 
-class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClickListener, MarkerListener, WaveformListener {
+class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClickListener,
+    MarkerListener, WaveformListener,
+    Toolbar.OnMenuItemClickListener {
     private var waveformView: WaveformView? = null
     private var ivPlaceholder: TextView? = null
-    private var btnClose: ImageButton? = null
     private var btnRecord: ImageButton? = null
     private var btnImport: ImageButton? = null
     private var txtName: TextView? = null
+    private val topAppBar: MaterialToolbar by lazy {
+        ViewUtils.find(this, R.id.topAppBar)
+    }
+    private val menuList: Menu by lazy {
+        topAppBar.menu
+    }
+    private val downloadMenuItem: MenuItem by lazy {
+        menuList.findItem(R.id.menuDownload)
+    }
+    private val restoreMenuItem: MenuItem by lazy {
+        menuList.findItem(R.id.menuRestore)
+    }
     private var lnrLayoutRecord: LinearLayout? = null
     private var btnRecordStop: ImageView? = null
     private var txtProgress: TextView? = null
     private var btnRecordPause: ImageView? = null
-    private var btnSave: TextView? = null
+
     private var btnPlay: LinearLayout? = null
     private var btnImgPlay: ImageButton? = null
-    private var btnDeleteRecord: ImageButton? = null
+
     private var deleteRecord = false
     private var deleteAlreadyRecordAudio = false
     private var mIsImportRecord = false
@@ -142,7 +159,8 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_record)
         if (intent != null && intent.extras != null && intent.extras?.containsKey(Constants.Intents.ELEMENT_AUDIO_BUTTON_BG_THEME_COLOR) == true) {
-            audioButtonColor = intent.getStringExtra(Constants.Intents.ELEMENT_AUDIO_BUTTON_BG_THEME_COLOR)
+            audioButtonColor =
+                intent.getStringExtra(Constants.Intents.ELEMENT_AUDIO_BUTTON_BG_THEME_COLOR)
             if (intent.extras?.containsKey(Constants.Intents.RECORDED_AUDIO_PATH) == true) {
                 audioRecordedPath = intent.getStringExtra(Constants.Intents.RECORDED_AUDIO_PATH)
             }
@@ -160,8 +178,6 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         mIsFromInit = true
         waveformView = ViewUtils.find(this, R.id.record)
         ivPlaceholder = ViewUtils.find(this, R.id.placeholder)
-        btnClose = ViewUtils.find(this, R.id.btn_record_close)
-        btnDeleteRecord = ViewUtils.find(this, R.id.btnDeleteRecord)
         btnRecord = ViewUtils.find(this, R.id.btn_record)
         btnImport = ViewUtils.find(this, R.id.btn_import)
         txtName = ViewUtils.find(this, R.id.txt_name)
@@ -169,7 +185,6 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         btnRecordStop = ViewUtils.find(this, R.id.btn_record_stop)
         txtProgress = ViewUtils.find(this, R.id.txt_progress)
         btnRecordPause = ViewUtils.find(this, R.id.btn_record_pause)
-        btnSave = ViewUtils.find(this, R.id.btn_save)
         btnPlay = ViewUtils.find(this, R.id.btn_play)
         btnImgPlay = ViewUtils.find(this, R.id.img_button_play)
         progressbarTxt = ViewUtils.find(this, R.id.progressbarTxt)
@@ -178,14 +193,24 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         btnRecordPause?.isEnabled = false
         btnRecord?.visibility = View.VISIBLE
         btnRecord?.isEnabled = true
-        btnSave?.setOnClickListener(this)
+        topAppBar.setOnMenuItemClickListener(this)
+        topAppBar.setNavigationOnClickListener {
+            if (mPlayer != null && mPlayer?.isPlaying() == true) {
+                mIsPlaying = false
+                mPlayer?.pause()
+            }
+            presenter?.pausePlayback()
+            deleteRecord = true
+            presenter?.stopRecording(true)
+            initTrim()
+            initVisibleBtn()
+            initWave()
+        }
         btnPlay?.setOnClickListener(this)
         btnImgPlay?.setOnClickListener(this)
         btnRecordStop?.setOnClickListener(this)
         btnRecord?.setOnClickListener(this)
         btnRecordPause?.setOnClickListener(this)
-        btnClose?.setOnClickListener(this)
-        btnDeleteRecord?.setOnClickListener(this)
         btnImport?.setOnClickListener(this)
         txtName?.setOnClickListener(this)
     }
@@ -223,10 +248,10 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
             mMarkerLeftInset = 0
             mMarkerRightInset = (22 * mDensity).toInt()
         }
-        markerStart?.let {
+        markerStart?.let { newMarkerStart ->
             audioWaveform?.post {
                 val layoutParams = audioWaveform?.layoutParams as RelativeLayout.LayoutParams
-                layoutParams.height = (it.measuredHeight)
+                layoutParams.height = (newMarkerStart.measuredHeight)
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
                 audioWaveform?.layoutParams = layoutParams
                 Log.e("TAG1", audioWaveform?.measuredHeight.toString() + "")
@@ -234,21 +259,24 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
             relativeLayoutTrim?.let {
                 it.post {
                     Log.e("TAG1", it.measuredHeight.toString() + "")
-                    mMarkerTopOffset = (it.measuredHeight / (2 - (it.measuredHeight)))
-                    mMarkerBottomOffset = (it.measuredHeight / (2 - (it.measuredHeight)))
+                    mMarkerTopOffset = ((it.measuredHeight / 2) - (newMarkerStart.measuredHeight))
+                    mMarkerBottomOffset =
+                        ((it.measuredHeight / 2) - (newMarkerStart.measuredHeight))
                 }
             }
         }
 
         /*
          * Change this for duration text as per your view
-         */mTextLeftInset = (20 * mDensity).toInt()
+         */
+        mTextLeftInset = (20 * mDensity).toInt()
         mTextTopOffset = (-1 * mDensity).toInt()
         mTextRightInset = (19 * mDensity).toInt()
         mTextBottomOffset = (-40 * mDensity).toInt()
     }
 
     private fun initWave() {
+        deleteRecord = false
         presenter = AudioRecordingWavesApplication.injector?.provideMainPresenter()
         presenter?.executeFirstRun()
         waveformView?.setOnSeekListener(object : OnSeekListener {
@@ -273,8 +301,9 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
 
     private fun initVisibleBtn() {
         Log.e("TAG", "initVisibleBtn")
-        btnClose?.visibility = View.VISIBLE
-        btnClose?.isEnabled = true
+        setNavigationCloseIconVisibility(false)
+        downloadMenuItem.isVisible = true
+        downloadMenuItem.isEnabled = true
         btnRecordPause?.visibility = View.INVISIBLE
         btnRecordPause?.isEnabled = false
         AnimationUtil.pauseButtonAnimation(btnRecordPause, false)
@@ -285,13 +314,37 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         btnImport?.isEnabled = true
         btnPlay?.visibility = View.GONE
         btnPlay?.isEnabled = false
-        btnSave?.visibility = View.INVISIBLE
-        btnSave?.isEnabled = false
+        setDownloadIconVisibility(false)
+        setIsDownloadIconEnable(false)
         lnrLayoutRecord?.visibility = View.INVISIBLE
-        btnDeleteRecord?.visibility = View.INVISIBLE
         ivPlaceholder?.visibility = View.VISIBLE
         relativeLayoutTrim?.visibility = View.INVISIBLE
         btnRecordStop?.isEnabled = true
+    }
+
+    private fun setNavigationCloseIconVisibility(isVisible: Boolean) {
+        if (isVisible) {
+            topAppBar.setNavigationIcon(R.drawable.ic_close)
+        } else
+            topAppBar.setNavigationIcon(null)
+    }
+
+    private fun setDownloadIconVisibility(isVisible: Boolean) {
+        downloadMenuItem.isVisible = isVisible
+        setRestoreIconVisibility(isVisible)
+    }
+
+    private fun setIsDownloadIconEnable(isEnable: Boolean) {
+        downloadMenuItem.isEnabled = isEnable
+        setIsRestoreIconEnable(isEnable)
+    }
+
+    private fun setRestoreIconVisibility(isVisible: Boolean) {
+        restoreMenuItem.isVisible = isVisible
+    }
+
+    private fun setIsRestoreIconEnable(isEnable: Boolean) {
+        restoreMenuItem.isEnabled = isEnable
     }
 
     override fun onResume() {
@@ -322,7 +375,6 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
             audioWaveform?.visibility = View.VISIBLE
             markerStart?.visibility = View.VISIBLE
             markerEnd?.visibility = View.VISIBLE
-            btnDeleteRecord?.visibility = View.VISIBLE
         } else {
             waveformView?.visibility = View.INVISIBLE
             ivPlaceholder?.visibility = View.INVISIBLE
@@ -332,7 +384,7 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
             btnImport?.isEnabled = false
             btnPlay?.isEnabled = false
             btnImgPlay?.isEnabled = false
-            btnSave?.isEnabled = false
+            setIsDownloadIconEnable(false)
         }
     }
 
@@ -369,30 +421,16 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
                 btnImport?.isEnabled = false
                 startFileSelector()
             }
-            R.id.btn_record_close -> {
-                deleteRecord = true
-                presenter?.stopRecording(true)
-                finishThisActivity()
-            }
-            R.id.btnDeleteRecord -> askDeleteRecordedAudio()
             R.id.btn_record_stop -> {
                 btnPlay?.visibility = View.VISIBLE
-                btnSave?.visibility = View.VISIBLE
                 btnRecord?.visibility = View.GONE
                 lnrLayoutRecord?.visibility = View.GONE
-                btnDeleteRecord?.visibility = View.GONE
                 btnPlay?.isEnabled = false
                 btnImgPlay?.isEnabled = false
-                btnSave?.isEnabled = false
+                setDownloadIconVisibility(true)
+                setIsDownloadIconEnable(false)
                 mIsDataNotNull = true
                 presenter?.stopRecording(false)
-            }
-            R.id.btn_save -> {
-                if (mPlayer != null && mPlayer?.isPlaying() == true) {
-                    showPlayPause()
-                    mPlayer?.pause()
-                }
-                saveBtnClick()
             }
             R.id.img_button_play, R.id.btn_play ->                 //This method Starts or Pause playback.
                 onPlay(mStartPos, mIsMarkerTouch)
@@ -451,7 +489,7 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
             audioWaveform?.visibility = View.VISIBLE
             btnPlay?.isEnabled = false
             btnImgPlay?.isEnabled = false
-            btnSave?.isEnabled = false
+            setIsDownloadIconEnable(false)
         }
 
     override fun keepScreenOn(on: Boolean) {
@@ -469,8 +507,7 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
             btnRecord?.visibility = View.INVISIBLE
             btnImport?.visibility = View.INVISIBLE
             btnImport?.isEnabled = false
-            btnClose?.visibility = View.VISIBLE
-            btnClose?.isEnabled = true
+            setNavigationCloseIconVisibility(true)
             lnrLayoutRecord?.let {
                 it.post {
                     val cx = (it.width) / 2
@@ -495,8 +532,8 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
             txtName?.setText(R.string.recording_progress)
             btnPlay?.visibility = View.INVISIBLE
             btnPlay?.isEnabled = false
-            btnSave?.visibility = View.INVISIBLE
-            btnSave?.isEnabled = false
+            setDownloadIconVisibility(false)
+            setIsDownloadIconEnable(false)
             waveformView?.showRecording()
             waveformView?.visibility = View.VISIBLE
             ivPlaceholder?.visibility = View.GONE
@@ -517,7 +554,12 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         txtName?.isClickable = true
         txtName?.isFocusable = true
         txtName?.text = ""
-        txtName?.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_pencil_small), null)
+        txtName?.setCompoundDrawablesWithIntrinsicBounds(
+            null,
+            null,
+            getDrawable(R.drawable.ic_pencil_small),
+            null
+        )
         txtName?.visibility = View.INVISIBLE
         btnRecordStop?.setImageResource(R.drawable.ic_pause_blue)
         btnRecord?.visibility = View.INVISIBLE
@@ -525,14 +567,12 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         btnImport?.isEnabled = false
         btnPlay?.visibility = View.VISIBLE
         btnPlay?.isEnabled = true
-        btnSave?.visibility = View.VISIBLE
-        btnClose?.visibility = View.INVISIBLE
-        btnClose?.isEnabled = false
+        setDownloadIconVisibility(true)
+        setNavigationCloseIconVisibility(false)
         btnRecordPause?.visibility = View.INVISIBLE
         btnRecordPause?.isEnabled = false
         AnimationUtil.pauseButtonAnimation(btnRecordPause, false)
         lnrLayoutRecord?.visibility = View.INVISIBLE
-        btnDeleteRecord?.visibility = View.INVISIBLE
     }
 
     override fun showRecordingPause() {
@@ -543,8 +583,7 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
             btnRecord?.visibility = View.INVISIBLE
             btnImport?.visibility = View.INVISIBLE
             btnImport?.isEnabled = false
-            btnClose?.visibility = View.VISIBLE
-            btnClose?.isEnabled = true
+            setNavigationCloseIconVisibility(true)
             lnrLayoutRecord?.visibility = View.VISIBLE
             btnRecordStop?.setImageResource(R.drawable.ic_pause_blue)
             btnRecordPause?.visibility = View.VISIBLE
@@ -558,12 +597,11 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
             txtName?.setText(R.string.recording_paused)
             txtProgress?.setTextColor(resources.getColor(R.color.text_primary_light))
             txtName?.visibility = View.INVISIBLE
-            btnClose?.visibility = View.VISIBLE
-            btnClose?.isEnabled = true
+            setNavigationCloseIconVisibility(true)
             btnPlay?.visibility = View.INVISIBLE
             btnPlay?.isEnabled = false
-            btnSave?.visibility = View.INVISIBLE
-            btnSave?.isEnabled = false
+            setDownloadIconVisibility(false)
+            setIsDownloadIconEnable(false)
             waveformView?.visibility = View.VISIBLE
             ivPlaceholder?.visibility = View.GONE
         }
@@ -604,8 +642,12 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
     }
 
     override fun showPlayPause() {
-        audioWaveform?.setPlayback(audioWaveform?.millisecsToPixels(mPlayer?.getCurrentPosition()
-                ?: 0) ?: 0)
+        audioWaveform?.setPlayback(
+            audioWaveform?.millisecsToPixels(
+                mPlayer?.getCurrentPosition()
+                    ?: 0
+            ) ?: 0
+        )
         btnImgPlay?.setImageResource(R.drawable.ic_play)
     }
 
@@ -630,10 +672,9 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
     override fun showImportStart() {
         btnImport?.visibility = View.INVISIBLE
         btnPlay?.visibility = View.VISIBLE
-        btnSave?.visibility = View.VISIBLE
+        setDownloadIconVisibility(true)
         btnRecord?.visibility = View.GONE
         lnrLayoutRecord?.visibility = View.GONE
-        btnDeleteRecord?.visibility = View.GONE
         mIsImportRecord = true
     }
 
@@ -656,7 +697,7 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
             btnImport?.isEnabled = false
             btnPlay?.isEnabled = false
             btnImgPlay?.isEnabled = false
-            btnSave?.isEnabled = false
+            setIsDownloadIconEnable(false)
         } else if (!mIsFromFile) initVisibleBtn()
     }
 
@@ -670,7 +711,13 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
             waveformView?.visibility = View.INVISIBLE
         }
         waveformView?.setWaveform(waveForm)
-        waveformView?.setPxPerSecond(AndroidUtils.dpToPx(AudioRecordingWavesApplication.getDpPerSecond(duration.toFloat() / 1000000f)))
+        waveformView?.setPxPerSecond(
+            AndroidUtils.dpToPx(
+                AudioRecordingWavesApplication.getDpPerSecond(
+                    duration.toFloat() / 1000000f
+                )
+            )
+        )
     }
 
     override fun waveFormToStart() {
@@ -693,24 +740,24 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
 
     override fun askDeleteRecord(name: String?) {
         AndroidUtils.showSimpleDialog(
-                this@RecordNewActivity,
-                R.drawable.ic_delete_forever,
-                R.string.warning,
-                applicationContext.getString(R.string.delete_record, name),
-                { dialog, which -> presenter?.deleteActiveRecord(false) }
+            this@RecordNewActivity,
+            R.drawable.ic_delete_forever,
+            R.string.warning,
+            applicationContext.getString(R.string.delete_record, name),
+            { dialog, which -> presenter?.deleteActiveRecord(false) }
         )
     }
 
     override fun askDeleteRecordForever() {
         AndroidUtils.showSimpleDialog(
-                this@RecordNewActivity,
-                R.drawable.ic_delete_forever,
-                R.string.warning,
-                applicationContext.getString(R.string.delete_this_record),
-                { dialog, which ->
-                    deleteRecord = true
-                    presenter?.stopRecording(true)
-                }
+            this@RecordNewActivity,
+            R.drawable.ic_delete_forever,
+            R.string.warning,
+            applicationContext.getString(R.string.delete_this_record),
+            { dialog, which ->
+                deleteRecord = true
+                presenter?.stopRecording(true)
+            }
         )
     }
 
@@ -767,13 +814,15 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         val container = LinearLayout(applicationContext)
         container.orientation = LinearLayout.VERTICAL
         val containerLp = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT)
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         container.layoutParams = containerLp
         val editText = EditText(applicationContext)
         val lp = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT)
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         editText.layoutParams = lp
         editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -786,7 +835,10 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
         editText.setTextColor(resources.getColor(R.color.text_primary_light))
-        editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.text_medium))
+        editText.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            resources.getDimension(R.dimen.text_medium)
+        )
         val pad = resources.getDimension(R.dimen.spacing_normal).toInt()
         val params = MarginLayoutParams(editText.layoutParams)
         params.setMargins(pad, pad, pad, pad)
@@ -804,11 +856,15 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         if (presenter?.isStorePublic == true) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                        && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(arrayOf(
+                    && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermissions(
+                        arrayOf(
                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE),
-                            REQ_CODE_READ_EXTERNAL_STORAGE_IMPORT)
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        ),
+                        REQ_CODE_READ_EXTERNAL_STORAGE_IMPORT
+                    )
                     return false
                 }
             }
@@ -819,11 +875,15 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
     private fun checkStoragePermissionPlayback(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                    && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(
+                && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions(
+                    arrayOf(
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE),
-                        REQ_CODE_READ_EXTERNAL_STORAGE_PLAYBACK)
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ),
+                    REQ_CODE_READ_EXTERNAL_STORAGE_PLAYBACK
+                )
                 return false
             }
         }
@@ -844,13 +904,17 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         if (presenter?.isStorePublic == true) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    AndroidUtils.showDialog(this, R.string.warning, R.string.need_write_permission,
-                            {
-                                requestPermissions(arrayOf(
-                                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                        Manifest.permission.READ_EXTERNAL_STORAGE),
-                                        REQ_CODE_WRITE_EXTERNAL_STORAGE)
-                            }, null
+                    AndroidUtils.showDialog(
+                        this, R.string.warning, R.string.need_write_permission,
+                        {
+                            requestPermissions(
+                                arrayOf(
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE
+                                ),
+                                REQ_CODE_WRITE_EXTERNAL_STORAGE
+                            )
+                        }, null
                     )
                     return false
                 }
@@ -859,7 +923,11 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         return true
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         if (requestCode == REQ_CODE_REC_AUDIO_AND_WRITE_EXTERNAL && grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
             visibleViewsAfterPermissionGranted()
         } else if (requestCode == REQ_CODE_RECORD_AUDIO && grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -875,7 +943,8 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         } else if (requestCode == REQ_CODE_READ_EXTERNAL_STORAGE_PLAYBACK && grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
             presenter?.startPlayback()
         } else if (requestCode == REQ_CODE_WRITE_EXTERNAL_STORAGE && grantResults.size > 0 && (grantResults[0] == PackageManager.PERMISSION_DENIED
-                        || grantResults[1] == PackageManager.PERMISSION_DENIED)) {
+                    || grantResults[1] == PackageManager.PERMISSION_DENIED)
+        ) {
             presenter?.setStoragePrivate(applicationContext)
             visibleViewsAfterPermissionGranted()
         }
@@ -884,7 +953,6 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
     private fun visibleViewsAfterPermissionGranted() {
         btnRecord?.visibility = View.GONE
         lnrLayoutRecord?.visibility = View.VISIBLE
-        btnDeleteRecord?.visibility = View.GONE
         presenter?.startRecording(applicationContext)
     }
 
@@ -904,7 +972,7 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         ivPlaceholder?.visibility = View.INVISIBLE
         waveformView?.visibility = View.INVISIBLE
         relativeLayoutTrim?.visibility = View.VISIBLE
-        AndroidUtils.runOnUIThread( { progressbarTxt?.visibility = View.VISIBLE })
+        AndroidUtils.runOnUIThread({ progressbarTxt?.visibility = View.VISIBLE })
         val listener: SoundFile.ProgressListener = object : SoundFile.ProgressListener {
             override fun reportProgress(fractionComplete: Double): Boolean {
                 val now = AndroidUtils.currentTime
@@ -936,11 +1004,11 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
                         mPlayer = SamplePlayer(it)
                     }
                 } catch (e: Exception) {
-                    AndroidUtils.runOnUIThread( { progressbarTxt?.visibility = View.INVISIBLE })
+                    AndroidUtils.runOnUIThread({ progressbarTxt?.visibility = View.INVISIBLE })
                     e.printStackTrace()
                     return
                 }
-                AndroidUtils.runOnUIThread( { progressbarTxt?.visibility = View.INVISIBLE })
+                AndroidUtils.runOnUIThread({ progressbarTxt?.visibility = View.INVISIBLE })
                 if (mLoadingKeepGoing) {
                     val runnable = Runnable {
                         relativeLayoutTrim?.visibility = View.INVISIBLE
@@ -967,7 +1035,6 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
     private fun finishOpeningSoundFile(mSoundFile: SoundFile, isReset: Int) {
         mIsFromFile = false
         afterRecordingStopBtnVisibility()
-        btnDeleteRecord?.visibility = View.VISIBLE
         waveformView?.visibility = View.INVISIBLE
         relativeLayoutTrim?.visibility = View.VISIBLE
         audioWaveform?.visibility = View.VISIBLE
@@ -975,7 +1042,7 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         markerEnd?.visibility = View.VISIBLE
         audioWaveform?.setSoundFile(mSoundFile)
         audioWaveform?.recomputeHeights(mDensity)
-        btnSave?.isEnabled = true
+        setIsDownloadIconEnable(true)
         btnImgPlay?.isEnabled = true
         btnPlay?.isEnabled = true
         mMaxPos = audioWaveform?.maxPos() ?: 0
@@ -989,8 +1056,10 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         if (mEndPos > mMaxPos) mEndPos = mMaxPos
         if (isReset == 1) {
             mStartPos = audioWaveform?.secondsToPixels(0.0) ?: 0
-            mEndPos = audioWaveform?.secondsToPixels(audioWaveform?.pixelsToSeconds(mMaxPos)
-                    ?: 0.toDouble()) ?: 0
+            mEndPos = audioWaveform?.secondsToPixels(
+                audioWaveform?.pixelsToSeconds(mMaxPos)
+                    ?: 0.toDouble()
+            ) ?: 0
         }
         if (audioWaveform != null && audioWaveform?.isInitialized() == true) {
             val seconds = audioWaveform?.pixelsToSeconds(mMaxPos) ?: 0.toDouble()
@@ -1035,7 +1104,8 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
                 mOffsetGoal = mOffset
             } else {
                 offsetDelta = mOffsetGoal - mOffset
-                offsetDelta = if (offsetDelta > 10) offsetDelta / 10 else if (offsetDelta > 0) 1 else if (offsetDelta < -10) offsetDelta / 10 else if (offsetDelta < 0) -1 else 0
+                offsetDelta =
+                    if (offsetDelta > 10) offsetDelta / 10 else if (offsetDelta > 0) 1 else if (offsetDelta < -10) offsetDelta / 10 else if (offsetDelta < 0) -1 else 0
                 mOffset += offsetDelta
             }
         }
@@ -1085,50 +1155,59 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         if (endTextX + (markerEnd?.width ?: 0) < 0) {
             endTextX = 0
         }
-        audioWaveform?.let { audioWaveform->
+        audioWaveform?.let { audioWaveform ->
             var params = RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT)
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+            )
             markerStart?.let {
                 params.setMargins(
-                        startX,
-                        audioWaveform.measuredHeight + mMarkerTopOffset,
-                        -it.width,
-                        -it.height)
+                    startX,
+                    audioWaveform.measuredHeight / 2 + mMarkerTopOffset,
+                    -it.width,
+                    -it.height
+                )
 
                 it.layoutParams = params
             }
             params = RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT)
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+            )
             txtStartPosition?.let {
                 params.setMargins(
-                        startTextX,
-                        mTextTopOffset,
-                        -it.width,
-                        -it.height)
+                    startTextX,
+                    mTextTopOffset,
+                    -it.width,
+                    -it.height
+                )
 
                 it.layoutParams = params
             }
             params = RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT)
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+            )
             markerEnd?.let {
                 params.setMargins(
-                        endX,
-                        audioWaveform.measuredHeight + mMarkerBottomOffset,
-                        -it.width,
-                        -it.height)
+                    endX,
+                    audioWaveform.measuredHeight / 2 + mMarkerBottomOffset,
+                    -it.width,
+                    -it.height
+                )
 
                 it.layoutParams = params
             }
             params = RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT)
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+            )
             txtEndPosition?.let {
-                params.setMargins(endTextX, audioWaveform.measuredHeight - it.height - mTextBottomOffset,
-                        -it.width,
-                        -it.height)
+                params.setMargins(
+                    endTextX, audioWaveform.measuredHeight - it.height - mTextBottomOffset,
+                    -it.width,
+                    -it.height
+                )
 
                 it.layoutParams = params
             }
@@ -1345,10 +1424,8 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
     override fun waveformZoomIn() {}
     override fun waveformZoomOut() {}
     private fun saveBtnClick() {
-        btnDeleteRecord?.isEnabled = false
         btnPlay?.isEnabled = false
         btnImgPlay?.isEnabled = false
-        btnSave?.text = getString(R.string.saving_placeholder)
         val startTime = (audioWaveform?.pixelsToSeconds(mStartPos) ?: 0).toDouble()
         val endTime = (audioWaveform?.pixelsToSeconds(mEndPos) ?: 0).toDouble()
         val difference = endTime - startTime
@@ -1356,7 +1433,11 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         val endFrame = audioWaveform?.secondsToFrames(endTime - 0.04) ?: 0
         val duration = (endTime - startTime + 0.5).toInt()
         if (difference <= 0) {
-            Toast.makeText(this@RecordNewActivity, "Trim seconds should be greater than 0 seconds", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this@RecordNewActivity,
+                "Trim seconds should be greater than 0 seconds",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
         // Save the sound file in a background thread
@@ -1380,7 +1461,8 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
                     e.printStackTrace()
                 }
                 val finalOutPath: String = outPath
-                val runnable = Runnable { afterSavingRingtone("AUDIO_TEMP", finalOutPath, duration) }
+                val runnable =
+                    Runnable { afterSavingRingtone("AUDIO_TEMP", finalOutPath, duration) }
                 mHandler?.post(runnable)
             }
         }
@@ -1418,7 +1500,8 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         var path: String? = null
         for (i in 0..99) {
             var testPath: String
-            testPath = if (i > 0) parentDir + filename + i + extension else parentDir + filename + extension
+            testPath =
+                if (i > 0) parentDir + filename + i + extension else parentDir + filename + extension
             try {
                 val f = RandomAccessFile(File(testPath), "r")
                 f.close()
@@ -1455,10 +1538,7 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         deleteAlreadyRecordAudio = false
         val conData = Bundle()
         conData.putString(Constants.Intents.RETURN_FILENAME, outPath)
-        val intent = intent
-        intent.putExtras(conData)
-        setResult(RESULT_OK, intent)
-        finishThisActivity()
+        Toast.makeText(this, getString(R.string.txt_recording_save), Toast.LENGTH_LONG).show()
     }
 
     @Synchronized
@@ -1503,14 +1583,14 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
 
     private fun askDeleteRecordedAudio() {
         AndroidUtils.showSimpleDialog(
-                this@RecordNewActivity,
-                R.drawable.ic_delete_forever,
-                R.string.warning,
-                applicationContext.getString(R.string.delete_this_record),
-                { dialog: DialogInterface?, which: Int ->
-                    deleteRecord = true
-                    deleteRecordedAudio()
-                }
+            this@RecordNewActivity,
+            R.drawable.ic_delete_forever,
+            R.string.warning,
+            applicationContext.getString(R.string.delete_this_record),
+            { dialog: DialogInterface?, which: Int ->
+                deleteRecord = true
+                deleteRecordedAudio()
+            }
         )
     }
 
@@ -1532,5 +1612,34 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         const val REQ_CODE_READ_EXTERNAL_STORAGE_IMPORT = 405
         const val REQ_CODE_READ_EXTERNAL_STORAGE_PLAYBACK = 406
         const val REQ_CODE_IMPORT_AUDIO = 11
+    }
+
+    override fun onMenuItemClick(menuItem: MenuItem?): Boolean {
+        return when (menuItem?.itemId) {
+            R.id.menuDownload -> {
+                // Handle download icon press
+                if (mPlayer != null && mPlayer?.isPlaying() == true) {
+                    showPlayPause()
+                    mPlayer?.pause()
+                }
+                saveBtnClick()
+                true
+            }
+            R.id.menuRestore -> {
+
+                if (mPlayer != null && mPlayer?.isPlaying() == true) {
+                    mIsPlaying = false
+                    mPlayer?.pause()
+                }
+                presenter?.pausePlayback()
+                deleteRecord = true
+                presenter?.stopRecording(true)
+                initTrim()
+                initVisibleBtn()
+                initWave()
+                true
+            }
+            else -> false
+        }
     }
 }

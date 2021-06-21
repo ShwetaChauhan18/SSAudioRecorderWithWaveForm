@@ -55,4 +55,10 @@
     <color name="md_blue_gray_500">#253343</color>
     <color name="md_blue_gray_900">#0d2c6d</color>
     <color name="md_blue_gray_300">#0d2c6d</color>
+
+
+    <color name="primaryColor">#1c2e4a</color>
+    <color name="secoundryColor">#203354</color>
+
+
 </resources>

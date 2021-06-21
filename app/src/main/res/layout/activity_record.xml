@@ -9,6 +9,28 @@
     tools:context=".record.RecordNewActivity"
     tools:ignore="RtlHardcoded,ContentDescription">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/primaryColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:collapsedTitleGravity="bottom|center_horizontal"
+            app:menu="@menu/top_app_bar"
+            app:navigationIcon="@drawable/ic_close"
+            app:navigationIconTint="@android:color/white"
+            app:title="@string/app_name"
+            app:titleTextColor="@android:color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <TextView
         android:id="@+id/toolbarTitle"
         android:layout_width="0dp"
@@ -19,18 +41,20 @@
         android:text="@string/txt_record_sound"
         android:textColor="@color/black"
         android:textSize="@dimen/_12ssp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@color/md_blue_gray_900"
+        android:background="@color/secoundryColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbarTitle">
+        app:layout_constraintTop_toBottomOf="@+id/appLayout">
 
         <com.wave.audiorecording.audioplayer.WaveformView
             android:id="@+id/record"
@@ -38,10 +62,10 @@
             android:layout_height="@dimen/_200sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_10sdp"
-            android:background="@color/md_blue_gray_300"
+            android:background="@color/secoundryColor"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbarTitle" />
+            app:layout_constraintTop_toBottomOf="@+id/appLayout" />
 
         <TextView
             android:id="@+id/placeholder"
@@ -55,13 +79,13 @@
             app:layout_constraintBottom_toBottomOf="@+id/record"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbarTitle" />
+            app:layout_constraintTop_toBottomOf="@+id/appLayout" />
 
         <LinearLayout
             android:id="@+id/relativeLayoutTrim"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_240sdp"
-            android:background="@color/md_blue_gray_300"
+            android:background="@color/secoundryColor"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -101,7 +125,8 @@
                     android:paddingStart="@dimen/_3sdp"
                     android:paddingEnd="@dimen/_3sdp"
                     android:visibility="invisible"
-                    app:srcCompat="@drawable/ic_left_trim" />
+                    app:srcCompat="@drawable/ic_left_trim"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/txtStartPosition"
@@ -110,7 +135,8 @@
                     android:text="@string/start_time"
                     android:textColor="@color/colorTextGray"
                     android:textSize="@dimen/_8ssp"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <com.wave.audiorecording.audioplayer.trim.MarkerView
                     android:id="@+id/markerEnd"
@@ -123,7 +149,8 @@
                     android:paddingStart="@dimen/_3sdp"
                     android:paddingEnd="@dimen/_3sdp"
                     android:visibility="invisible"
-                    app:srcCompat="@drawable/ic_right_trim" />
+                    app:srcCompat="@drawable/ic_right_trim"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/txtEndPosition"
@@ -132,27 +159,12 @@
                     android:text="@string/start_time"
                     android:textColor="@color/colorTextGray"
                     android:textSize="@dimen/_8ssp"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
             </RelativeLayout>
         </LinearLayout>
     </FrameLayout>
-
-    <ImageButton
-        android:id="@+id/btn_record_close"
-        android:layout_width="@dimen/bottom_pnl_small_btn_size"
-        android:layout_height="@dimen/bottom_pnl_small_btn_size"
-        android:layout_gravity="center"
-        android:layout_marginStart="@dimen/_15sdp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/delete"
-        android:padding="@dimen/spacing_normal"
-        android:scaleType="center"
-        app:srcCompat="@drawable/ic_close"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_record"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btn_record" />
 
 
     <ImageButton
@@ -164,12 +176,12 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@null"
         android:padding="@dimen/spacing_normal"
-        app:srcCompat="@drawable/ic_gallery"
         android:tint="@color/md_blue_gray_700"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/btn_record"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btn_record" />
+        app:layout_constraintTop_toTopOf="@+id/btn_record"
+        app:srcCompat="@drawable/ic_gallery" />
 
     <TextView
         android:id="@+id/txt_name"
@@ -181,7 +193,7 @@
         android:layout_marginBottom="@dimen/spacing_normal"
         android:ellipsize="end"
         android:maxLines="2"
-        android:textColor="@color/md_blue_gray_900"
+        android:textColor="@color/secoundryColor"
         android:textSize="@dimen/text_large"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/btn_record"
@@ -202,7 +214,8 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible">
 
         <ImageView
             android:id="@+id/btn_record_stop"
@@ -232,33 +245,12 @@
         android:layout_height="@dimen/_45sdp"
         android:layout_gravity="center"
         android:layout_marginStart="@dimen/_18sdp"
-        app:srcCompat="@drawable/ic_pause_grey"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/lnr_layout_record"
         app:layout_constraintStart_toEndOf="@+id/lnr_layout_record"
-        app:layout_constraintTop_toTopOf="@+id/lnr_layout_record" />
-
-    <TextView
-        android:id="@+id/btn_save"
-        android:layout_width="@dimen/_80sdp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|center_vertical"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:background="@drawable/bg_tab_layout_blue"
-        android:contentDescription="@null"
-        android:fontFamily="@font/poppins_medium"
-        android:gravity="center"
-        android:padding="@dimen/_10sdp"
-        android:text="Save"
-        android:textColor="@color/dark_white"
-        android:textSize="@dimen/_13ssp"
-        android:textStyle="bold"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_play"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_play"
-        app:layout_constraintTop_toTopOf="@+id/btn_play" />
+        app:layout_constraintTop_toTopOf="@+id/lnr_layout_record"
+        app:srcCompat="@drawable/ic_pause_grey"
+        tools:visibility="visible" />
 
     <LinearLayout
         android:id="@+id/btn_play"
@@ -270,8 +262,8 @@
         android:orientation="horizontal"
         android:padding="@dimen/_18sdp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_save"
-        app:layout_constraintStart_toEndOf="@+id/btnDeleteRecord">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageButton
             android:id="@+id/img_button_play"
@@ -282,24 +274,10 @@
             android:adjustViewBounds="true"
             android:background="?attr/selectableItemBackground"
             android:contentDescription="@null"
-            app:srcCompat="@drawable/ic_play"
-            android:tint="@color/white" />
+            android:tint="@color/white"
+            app:srcCompat="@drawable/ic_play" />
 
     </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/btnDeleteRecord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_20sdp"
-        android:layout_marginEnd="@dimen/_20sdp"
-        android:background="@drawable/btn_ripple_effect_delete"
-        app:srcCompat="@drawable/ic_delete"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_play"
-        app:layout_constraintEnd_toStartOf="@+id/btn_play"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btn_play" />
 
     <ImageButton
         android:id="@+id/btn_record"
@@ -313,10 +291,11 @@
         android:background="@drawable/form_circle_button"
         android:contentDescription="@string/recording"
         android:scaleType="center"
-        app:srcCompat="@drawable/fm_audio"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/fm_audio"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
