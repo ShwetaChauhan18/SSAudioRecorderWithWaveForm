@@ -483,7 +483,7 @@ class WaveformViewTrim(context: Context?, attrs: AttributeSet?) : View(context, 
         val res = resources
         mGridPaint = Paint()
         mGridPaint.isAntiAlias = false
-        mGridPaint.color = res.getColor(R.color.md_blue_gray_300)
+        mGridPaint.color = res.getColor(R.color.secoundryColor)
         mSelectedLinePaint = Paint()
         mSelectedLinePaint.isAntiAlias = false
         mSelectedLinePaint.color = res.getColor(R.color.dark_green)
@@ -492,7 +492,7 @@ class WaveformViewTrim(context: Context?, attrs: AttributeSet?) : View(context, 
         mUnselectedLinePaint.color = res.getColor(R.color.dark_green)
         mUnselectedBkgndLinePaint = Paint()
         mUnselectedBkgndLinePaint.isAntiAlias = false
-        mUnselectedBkgndLinePaint.color = res.getColor(R.color.md_blue_gray_300)
+        mUnselectedBkgndLinePaint.color = res.getColor(R.color.secoundryColor)
         mBorderLinePaint = Paint()
         mBorderLinePaint.isAntiAlias = true
         mBorderLinePaint.strokeWidth = 6f
@@ -505,8 +505,8 @@ class WaveformViewTrim(context: Context?, attrs: AttributeSet?) : View(context, 
         mTimecodePaint = Paint()
         mTimecodePaint.textSize = 12f
         mTimecodePaint.isAntiAlias = true
-        mTimecodePaint.color = res.getColor(R.color.md_blue_gray_300)
-        mTimecodePaint.setShadowLayer(2f, 1f, 1f, res.getColor(R.color.md_blue_gray_300))
+        mTimecodePaint.color = res.getColor(R.color.secoundryColor)
+        mTimecodePaint.setShadowLayer(2f, 1f, 1f, res.getColor(R.color.secoundryColor))
         mGestureDetector = GestureDetector(
                 context,
                 object : SimpleOnGestureListener() {

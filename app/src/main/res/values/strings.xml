@@ -32,6 +32,8 @@
     <string name="delete">Delete</string>
 
     <string name="txt_end_marker">end marker</string>
+    <string name="txt_download">Download</string>
+    <string name="txt_restore">Reset</string>
 
     <string name="delete_record">Move to trash %s?</string>
     <string name="warning">Warning!</string>
@@ -44,4 +46,5 @@
     <string name="recording_progress">Recording&#8230;</string>
     <string name="recording_paused">Paused</string>
     <string name="playback">Playback: %s</string>
+    <string name="txt_recording_save">Recording Saved.</string>
 </resources>
