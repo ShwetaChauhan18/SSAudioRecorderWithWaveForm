@@ -486,10 +486,10 @@ class WaveformViewTrim(context: Context?, attrs: AttributeSet?) : View(context, 
         mGridPaint.color = res.getColor(R.color.secoundryColor)
         mSelectedLinePaint = Paint()
         mSelectedLinePaint.isAntiAlias = false
-        mSelectedLinePaint.color = res.getColor(R.color.dark_green)
+        mSelectedLinePaint.color = res.getColor(R.color.recorded_waves_color)
         mUnselectedLinePaint = Paint()
         mUnselectedLinePaint.isAntiAlias = false
-        mUnselectedLinePaint.color = res.getColor(R.color.dark_green)
+        mUnselectedLinePaint.color = res.getColor(R.color.recorded_waves_color)
         mUnselectedBkgndLinePaint = Paint()
         mUnselectedBkgndLinePaint.isAntiAlias = false
         mUnselectedBkgndLinePaint.color = res.getColor(R.color.secoundryColor)
@@ -501,7 +501,7 @@ class WaveformViewTrim(context: Context?, attrs: AttributeSet?) : View(context, 
         mPlaybackLinePaint = Paint()
         mPlaybackLinePaint.isAntiAlias = false
         mPlaybackLinePaint.strokeWidth = 3f
-        mPlaybackLinePaint.color = res.getColor(R.color.scrubber_color)
+        mPlaybackLinePaint.color = res.getColor(R.color.recorded_current_index_line_color)
         mTimecodePaint = Paint()
         mTimecodePaint.textSize = 12f
         mTimecodePaint.isAntiAlias = true

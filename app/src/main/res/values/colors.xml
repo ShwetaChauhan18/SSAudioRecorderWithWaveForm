@@ -60,5 +60,8 @@
     <color name="primaryColor">#1c2e4a</color>
     <color name="secoundryColor">#203354</color>
 
+    <color name="recording_waves_color">#FFFFFF</color>
+    <color name="recorded_waves_color">#FFFFFF</color>
+    <color name="recorded_current_index_line_color">#ffd600</color>
 
 </resources>
