@@ -7,18 +7,18 @@ SSAudioRecorderWithWaveForm is recording audio with wave form data, you can reco
 
 ## Features
 
-- Recording audio
-- Playing back recordings
-- Make recordings in M4A and WAV
-- Displaying waveform of the recording
-- Import audio files
-- Trim recorded/imported audio
-- Customise trim marker
-- Customise waveform color
+- Recording audio 🎤
+- Playing back recordings ▶️
+- Make recordings in M4A and WAV 🔈
+- Displaying waveform of the recording 〰️•*¨*•.¸¸♬
+- Import audio files 📁
+- Trim recorded/imported audio 📇
+- Customise trim marker 🖊️
+- Customise waveform color 〰️🎨
 
 #### Two recording formats are available:
- - M4A
- - Waveform Audio File Format (WAV)
+ - M4A 🌊
+ - Waveform Audio File Format (WAV) 〰️
 
 # 🎬 Preview
 
