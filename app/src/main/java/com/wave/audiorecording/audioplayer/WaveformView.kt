@@ -91,7 +91,7 @@ class WaveformView : View {
         waveformPaint?.style = Paint.Style.STROKE
         waveformPaint?.strokeWidth = AndroidUtils.dpToPx(1.2f)
         waveformPaint?.isAntiAlias = true
-        waveformPaint?.color = context.resources.getColor(R.color.dark_green)
+        waveformPaint?.color = context.resources.getColor(R.color.recording_waves_color)
         scrubberPaint = Paint()
         scrubberPaint?.isAntiAlias = false
         scrubberPaint?.style = Paint.Style.STROKE

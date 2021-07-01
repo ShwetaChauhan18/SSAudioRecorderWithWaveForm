@@ -1539,6 +1539,8 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         val conData = Bundle()
         conData.putString(Constants.Intents.RETURN_FILENAME, outPath)
         Toast.makeText(this, getString(R.string.txt_recording_save), Toast.LENGTH_LONG).show()
+        btnPlay?.isEnabled = true
+        btnImgPlay?.isEnabled = true
     }
 
     @Synchronized
@@ -1620,6 +1622,7 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
                 // Handle download icon press
                 if (mPlayer != null && mPlayer?.isPlaying() == true) {
                     showPlayPause()
+                    mIsPlaying = false
                     mPlayer?.pause()
                 }
                 saveBtnClick()
