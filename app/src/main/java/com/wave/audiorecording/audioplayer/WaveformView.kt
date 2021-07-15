@@ -172,20 +172,6 @@ class WaveformView : View {
         moveAnimator.start()
     }
 
-    /**
-     * Rewinds current play position. (Current position + mills)
-     *
-     * @param mills time interval.
-     */
-    fun rewindMills(mills: Long) {
-        playProgressPx += AndroidUtils.convertMillsToPx(mills, pxPerSecond)
-        updateShifts(-playProgressPx)
-        prevScreenShift = screenShift
-        invalidate()
-        if (onSeekListener != null) {
-            onSeekListener?.onSeeking(-screenShift, AndroidUtils.convertPxToMills(-screenShift.toLong(), pxPerSecond).toLong())
-        }
-    }
 
     /**
      * Set new current play position in pixels.
@@ -423,45 +409,6 @@ class WaveformView : View {
         }
     }
 
-    private fun drawWaveForm(canvas: Canvas) {
-        waveformData?.let {
-            if ((it.size) > 0) {
-                var width = it.size
-                val half = measuredHeight / 2
-                if (width > measuredWidth) {
-                    width = measuredWidth
-                }
-                path.reset()
-                var xPos = waveformShift.toFloat()
-                if (xPos < VIEW_DRAW_EDGE) {
-                    xPos = VIEW_DRAW_EDGE.toFloat()
-                }
-                path.moveTo(xPos, half.toFloat())
-                path.lineTo(xPos, half.toFloat())
-                val dpi = AndroidUtils.dpToPx(1)
-                for (i in 1 until width) {
-                    xPos = waveformShift + i * dpi
-                    if (xPos > VIEW_DRAW_EDGE && xPos < viewWidth - VIEW_DRAW_EDGE) {
-                        path.lineTo(xPos, (half - it[i]).toFloat())
-                    }
-                }
-                for (i in width - 1 downTo 0) {
-                    xPos = waveformShift + i * dpi
-                    if (xPos > VIEW_DRAW_EDGE && xPos < viewWidth - VIEW_DRAW_EDGE) {
-                        path.lineTo(xPos, (half + 1 + it[i]).toFloat())
-                    }
-                }
-                xPos = waveformShift.toFloat()
-                if (xPos < VIEW_DRAW_EDGE) {
-                    xPos = VIEW_DRAW_EDGE.toFloat()
-                }
-                path.lineTo(xPos, half.toFloat())
-                path.close()
-                waveformPaint?.let { it1 -> canvas.drawPath(path, it1) }
-            }
-        }
-    }
-
     private fun drawWaveFormForUpperWave(canvas: Canvas) {
         waveformData?.let {
             var width = it.size
@@ -620,7 +567,6 @@ class WaveformView : View {
 
     companion object {
         private val DEFAULT_PIXEL_PER_SECOND = AndroidUtils.dpToPx(AppConstants.SHORT_RECORD_DP_PER_SECOND.toFloat()).toInt()
-        private val SMALL_LINE_HEIGHT = AndroidUtils.dpToPx(12)
         private val PADD = AndroidUtils.dpToPx(6)
         private const val VIEW_DRAW_EDGE = 0
         private const val ANIMATION_DURATION = 330 //mills.

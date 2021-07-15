@@ -19,7 +19,7 @@ import com.wave.audiorecording.R
 import com.wave.audiorecording.data.FileRepository
 import com.wave.audiorecording.data.database.Record
 import com.wave.audiorecording.exception.AppException
-import com.wave.audiorecording.record.RecordNewActivity
+import com.wave.audiorecording.record.RecordingActivity
 import com.wave.audiorecording.util.AndroidUtils
 import com.wave.audiorecording.util.AppConstants
 import java.io.File
@@ -95,7 +95,7 @@ class RecordingService : Service() {
     }
 
     private fun createContentIntent(): PendingIntent {
-        val intent = Intent(applicationContext, RecordNewActivity::class.java)
+        val intent = Intent(applicationContext, RecordingActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
         return PendingIntent.getActivity(applicationContext, 0, intent, 0)
     }
@@ -153,10 +153,6 @@ class RecordingService : Service() {
         const val ACTION_STOP_RECORDING_SERVICE = "ACTION_STOP_RECORDING_SERVICE"
         const val ACTION_STOP_RECORDING = "ACTION_STOP_RECORDING"
         const val ACTION_PAUSE_RECORDING = "ACTION_PAUSE_RECORDING"
-        private const val CHANNEL_NAME = "Default"
-        private const val CHANNEL_ID = "NotificationId"
-        private const val CHANNEL_NAME_ERRORS = "Errors"
-        private const val CHANNEL_ID_ERRORS = "Errors"
         private const val NOTIF_ID = 101
     }
 }

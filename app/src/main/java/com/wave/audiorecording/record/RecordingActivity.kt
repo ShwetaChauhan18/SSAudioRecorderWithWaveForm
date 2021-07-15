@@ -61,7 +61,7 @@ import com.wave.audiorecording.util.ViewUtils
 import java.io.File
 import java.io.RandomAccessFile
 
-class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClickListener,
+class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClickListener,
     MarkerListener, WaveformListener,
     Toolbar.OnMenuItemClickListener {
     private var waveformView: WaveformView? = null
@@ -740,7 +740,7 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
 
     override fun askDeleteRecord(name: String?) {
         AndroidUtils.showSimpleDialog(
-            this@RecordNewActivity,
+            this@RecordingActivity,
             R.drawable.ic_delete_forever,
             R.string.warning,
             applicationContext.getString(R.string.delete_record, name),
@@ -750,7 +750,7 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
 
     override fun askDeleteRecordForever() {
         AndroidUtils.showSimpleDialog(
-            this@RecordNewActivity,
+            this@RecordingActivity,
             R.drawable.ic_delete_forever,
             R.string.warning,
             applicationContext.getString(R.string.delete_this_record),
@@ -872,23 +872,6 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         return true
     }
 
-    private fun checkStoragePermissionPlayback(): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions(
-                    arrayOf(
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ),
-                    REQ_CODE_READ_EXTERNAL_STORAGE_PLAYBACK
-                )
-                return false
-            }
-        }
-        return true
-    }
 
     private fun checkRecordPermission2(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -904,17 +887,18 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         if (presenter?.isStorePublic == true) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    AndroidUtils.showDialog(
-                        this, R.string.warning, R.string.need_write_permission,
-                        {
-                            requestPermissions(
-                                arrayOf(
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                    Manifest.permission.READ_EXTERNAL_STORAGE
-                                ),
-                                REQ_CODE_WRITE_EXTERNAL_STORAGE
-                            )
-                        }, null
+                    AndroidUtils.showSimpleDialog(
+                        this@RecordingActivity,
+                        R.mipmap.ic_launcher,
+                        R.string.warning,
+                        getString(R.string.need_write_permission),
+                        { dialog, which -> requestPermissions(
+                            arrayOf(
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE
+                            ),
+                            REQ_CODE_WRITE_EXTERNAL_STORAGE
+                        ) }
                     )
                     return false
                 }
@@ -1434,7 +1418,7 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         val duration = (endTime - startTime + 0.5).toInt()
         if (difference <= 0) {
             Toast.makeText(
-                this@RecordNewActivity,
+                this@RecordingActivity,
                 "Trim seconds should be greater than 0 seconds",
                 Toast.LENGTH_SHORT
             ).show()
@@ -1581,19 +1565,6 @@ class RecordNewActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-
-    private fun askDeleteRecordedAudio() {
-        AndroidUtils.showSimpleDialog(
-            this@RecordNewActivity,
-            R.drawable.ic_delete_forever,
-            R.string.warning,
-            applicationContext.getString(R.string.delete_this_record),
-            { dialog: DialogInterface?, which: Int ->
-                deleteRecord = true
-                deleteRecordedAudio()
-            }
-        )
     }
 
     private fun deleteRecordedAudio() {

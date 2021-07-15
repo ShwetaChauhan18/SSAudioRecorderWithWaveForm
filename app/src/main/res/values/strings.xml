@@ -39,12 +39,9 @@
     <string name="warning">Warning!</string>
     <string name="delete_this_record">Delete this record?</string>
     <string name="need_write_permission">The app requires permission to access to the public storage. If not allowed, records will be stored in the app’s private directory</string>
-    <string name="saving_placeholder">Saving..</string>
 
     <string name="recording">Recording: %s</string>
-    <string name="recording_is_on">Recording is ON</string>
     <string name="recording_progress">Recording&#8230;</string>
     <string name="recording_paused">Paused</string>
-    <string name="playback">Playback: %s</string>
     <string name="txt_recording_save">Recording Saved.</string>
 </resources>

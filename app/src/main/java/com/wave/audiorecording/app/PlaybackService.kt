@@ -88,32 +88,6 @@ class PlaybackService : Service() {
         stopSelf()
     }
 
-    protected fun getPendingSelfIntent(context: Context?, action: String?): PendingIntent {
-        val intent = Intent(context, StopPlaybackReceiver::class.java)
-        intent.action = action
-        return PendingIntent.getBroadcast(context, REQUEST_CODE, intent, 0)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel(channelId: String, channelName: String): String {
-        val channel = notificationManager?.getNotificationChannel(channelId)
-        if (channel == null) {
-            val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
-            chan.apply {
-                lightColor = Color.BLUE
-                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                setSound(null, null)
-                enableLights(false)
-                enableVibration(false)
-
-            }
-            notificationManager?.createNotificationChannel(chan)
-        } else {
-            Log.d("TAG", "Channel already exists: " + CHANNEL_ID)
-        }
-        return channelId
-    }
-
     fun onPausePlayback() {
         if (remoteViewsSmall != null) {
             builder?.setOngoing(false)
@@ -141,7 +115,6 @@ class PlaybackService : Service() {
         const val ACTION_PAUSE_PLAYBACK = "ACTION_PAUSE_PLAYBACK"
         const val ACTION_CLOSE = "ACTION_CLOSE"
         const val EXTRAS_KEY_RECORD_NAME = "record_name"
-        private const val CHANNEL_NAME = "Default"
         private const val CHANNEL_ID = "NotificationId"
         private const val NOTIF_ID = 101
         private const val REQUEST_CODE = 10

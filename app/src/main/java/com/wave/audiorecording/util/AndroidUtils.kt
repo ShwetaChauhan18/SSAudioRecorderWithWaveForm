@@ -186,44 +186,4 @@ object AndroidUtils {
         alert.show()
     }
 
-    fun showDialog(activity: Activity, resTitle: Int, resContent: Int,
-                   positiveBtnListener: View.OnClickListener?, negativeBtnListener: View.OnClickListener?) {
-        showDialog(activity, -1, -1, resTitle, resContent, positiveBtnListener, negativeBtnListener)
-    }
-
-    fun showDialog(activity: Activity, positiveBtnTextRes: Int, negativeBtnTextRes: Int, resTitle: Int, resContent: Int,
-                   positiveBtnListener: View.OnClickListener?, negativeBtnListener: View.OnClickListener?) {
-        val dialog = Dialog(activity)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(false)
-        val view = activity.layoutInflater.inflate(R.layout.dialog_layout, null, false)
-        (view.findViewById<View>(R.id.dialog_title) as TextView).setText(resTitle)
-        (view.findViewById<View>(R.id.dialog_content) as TextView).setText(resContent)
-        if (negativeBtnListener != null) {
-            val negativeBtn = view.findViewById<Button>(R.id.dialog_negative_btn)
-            if (negativeBtnTextRes >= 0) {
-                negativeBtn.setText(negativeBtnTextRes)
-            }
-            negativeBtn.setOnClickListener { v ->
-                negativeBtnListener.onClick(v)
-                dialog.dismiss()
-            }
-        } else {
-            view.findViewById<View>(R.id.dialog_negative_btn).visibility = View.GONE
-        }
-        if (positiveBtnListener != null) {
-            val positiveBtn = view.findViewById<Button>(R.id.dialog_positive_btn)
-            if (positiveBtnTextRes >= 0) {
-                positiveBtn.setText(positiveBtnTextRes)
-            }
-            positiveBtn.setOnClickListener { v ->
-                positiveBtnListener.onClick(v)
-                dialog.dismiss()
-            }
-        } else {
-            view.findViewById<View>(R.id.dialog_positive_btn).visibility = View.GONE
-        }
-        dialog.setContentView(view)
-        dialog.show()
-    }
 }

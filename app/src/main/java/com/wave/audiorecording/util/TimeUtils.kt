@@ -33,13 +33,4 @@ object TimeUtils {
         return dateTimeFormat.format(Date(time))
     }
 
-    /**
-     * Date format: 15-07-2020
-     */
-    fun convertUnixTimeStampToDateOrTime(time: Long, format: String?): String {
-        val date: Date = Date(time * Constants.Intents.Companion.DELAY_1000_MILI_SECOND)
-        // format of the date
-        val simpleDateFormat = SimpleDateFormat(format, Locale.getDefault())
-        return simpleDateFormat.format(date)
-    }
 }

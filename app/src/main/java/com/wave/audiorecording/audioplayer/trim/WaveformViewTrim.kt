@@ -80,10 +80,6 @@ class WaveformViewTrim(context: Context?, attrs: AttributeSet?) : View(context, 
         return true
     }
 
-    fun hasSoundFile(): Boolean {
-        return mSoundFile != null
-    }
-
     fun setSoundFile(soundFile: SoundFile?) {
         mSoundFile = soundFile
         mSampleRate = mSoundFile?.getSampleRate() ?: 0
@@ -182,16 +178,8 @@ class WaveformViewTrim(context: Context?, attrs: AttributeSet?) : View(context, 
         mOffset = offset
     }
 
-    fun getStart(): Int {
-        return mSelectionStart
-    }
-
     fun getEnd(): Int {
         return mSelectionEnd
-    }
-
-    fun getOffset(): Int {
-        return mOffset
     }
 
     fun setPlayback(pos: Int) {
