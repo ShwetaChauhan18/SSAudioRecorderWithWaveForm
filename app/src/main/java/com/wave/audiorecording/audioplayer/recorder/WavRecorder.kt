@@ -154,8 +154,7 @@ class WavRecorder private constructor() : RecorderContract.Recorder {
 
     private fun writeAudioDataToFile() {
         val data = ByteArray(bufferSize)
-        val fos: FileOutputStream?
-        fos = try {
+        val fos: FileOutputStream? = try {
             FileOutputStream(recordFile)
         } catch (e: FileNotFoundException) {
             Log.e("WavRecorder", e.message.toString())

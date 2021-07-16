@@ -11,25 +11,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 
 object AnimationUtil {
-    @TargetApi(21)
-    fun viewElevationAnimation(view: View?, `val`: Float, listener: Animator.AnimatorListener?) {
-        view?.animate()
-                ?.translationZ(`val`)
-                ?.setDuration(250L)
-                ?.setInterpolator(AnimationUtils.loadInterpolator(view.context,
-                        android.R.interpolator.accelerate_decelerate))
-                ?.setListener(listener)
-                ?.start()
-    }
-
-    @TargetApi(21)
-    fun viewAnimationX(view: View?, `val`: Float) {
-        view?.animate()
-                ?.translationX(`val`)
-                ?.alpha(0.0f)
-                ?.setDuration(300)
-                ?.start()
-    }
 
     @TargetApi(21)
     fun viewAnimationX(view: View?, `val`: Float, listener: Animator.AnimatorListener?) {
@@ -43,16 +24,6 @@ object AnimationUtil {
                 ?.start()
     }
 
-    @TargetApi(21)
-    fun viewAnimationY(view: View?, `val`: Float, listener: Animator.AnimatorListener?) {
-        view?.animate()
-                ?.translationY(`val`)
-                ?.setDuration(250L)
-                ?.setInterpolator(AnimationUtils.loadInterpolator(view.context,
-                        android.R.interpolator.accelerate_decelerate))
-                ?.setListener(listener)
-                ?.start()
-    }
 
     fun animation(view: View?) {
         val scaleDown = ObjectAnimator.ofPropertyValuesHolder(view,

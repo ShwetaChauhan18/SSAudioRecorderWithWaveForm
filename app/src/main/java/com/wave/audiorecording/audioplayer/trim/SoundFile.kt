@@ -584,14 +584,6 @@ private constructor() {
         }
     }
 
-    // should be removed in the near future...
-    @Throws(IOException::class)
-    fun WriteWAVFile(outputFile: File?, startFrame: Int, numFrames: Int) {
-        val startTime = startFrame.toFloat() * getSamplesPerFrame() / mSampleRate
-        val endTime = (startFrame + numFrames) as Float * getSamplesPerFrame() / mSampleRate
-        WriteWAVFile(outputFile, startTime, endTime)
-    }
-
     @Throws(IOException::class)
     fun WriteWAVFile(outputFile: File?, startTime: Float, endTime: Float) {
         val startOffset = (startTime * mSampleRate).toInt() * 2 * mChannels
@@ -639,61 +631,6 @@ private constructor() {
         outputStream.close()
     }
 
-    // Debugging method dumping all the samples in mDecodedSamples in a TSV file.
-    // Each row describes one sample and has the following format:
-    // "<presentation time in seconds>\t<channel 1>\t...\t<channel N>\n"
-    // File will be written on the SDCard under media/audio/debug/
-    // If fileName is null or empty, then the default file name (samples.tsv) is used.
-    // Helper method (samples will be dumped in media/audio/debug/samples.tsv).
-    private fun DumpSamples(fileName: String? = null) {
-        var fileName = fileName
-        var externalRootDir = Environment.getExternalStorageDirectory().path
-        if (!externalRootDir.endsWith("/")) {
-            externalRootDir += "/"
-        }
-        var parentDir = externalRootDir + "media/audio/debug/"
-        // Create the parent directory
-        val parentDirFile = File(parentDir)
-        parentDirFile.mkdirs()
-        // If we can't write to that special path, try just writing directly to the SDCard.
-        if (!parentDirFile.isDirectory) {
-            parentDir = externalRootDir
-        }
-        if (fileName == null || fileName.isEmpty()) {
-            fileName = "samples.tsv"
-        }
-        val outFile = File(parentDir + fileName)
-
-        // Start dumping the samples.
-        var writer: BufferedWriter? = null
-        var presentationTime = 0f
-        mDecodedSamples?.rewind()
-        var row: String?
-        try {
-            writer = BufferedWriter(FileWriter(outFile))
-            for (sampleIndex in 0 until mNumSamples) {
-                presentationTime = sampleIndex.toFloat() / mSampleRate
-                row = java.lang.Float.toString(presentationTime)
-                for (channelIndex in 0 until mChannels) {
-                    row += "\t" + mDecodedSamples?.get()
-                }
-                row += "\n"
-                writer.write(row)
-            }
-        } catch (e: IOException) {
-            Log.w("Ringdroid", "Failed to create the sample TSV file.")
-            Log.w("Ringdroid", getStackTrace(e))
-        }
-        // We are done here. Close the file and rewind the buffer.
-        try {
-            writer?.close()
-        } catch (e: Exception) {
-            Log.w("Ringdroid", "Failed to close sample TSV file.")
-            Log.w("Ringdroid", getStackTrace(e))
-        }
-        mDecodedSamples?.rewind()
-    }
-
     // Return the stack trace of a given exception.
     private fun getStackTrace(e: Exception): String {
         val writer = StringWriter()
@@ -717,8 +654,6 @@ private constructor() {
     }
 
     companion object {
-        private const val serialVersionUID = -2505698991597837165L
-
         // TODO(nfaralli): what is the real list of supported extensions? Is it device dependent?
         fun getSupportedExtensions(): Array<String> {
             return arrayOf("mp3", "wav", "3gpp", "3gp", "amr", "aac", "m4a", "ogg")

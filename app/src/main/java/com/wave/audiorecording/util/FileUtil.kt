@@ -164,50 +164,6 @@ object FileUtil {
         }
     }
 
-    /**
-     * Copy file.
-     *
-     * @param fileToCopy File to copy.
-     * @param newFile    File in which will contain copied data.
-     * @return true if copy succeed, otherwise - false.
-     */
-    fun copyFile(fileToCopy: File?, newFile: File, listener: OnCopyListener?): Boolean {
-        try {
-            FileInputStream(fileToCopy).use { `in` ->
-                FileOutputStream(newFile).use { out ->
-                    return if (copyLarge(`in`, out, ByteArray(DEFAULT_BUFFER_SIZE), listener) > 0) {
-                        true
-                    } else {
-                        Log.e("TAG", "Nothing was copied!")
-                        deleteFile(newFile)
-                        false
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            return false
-        }
-    }
-
-    /**
-     * Get free space for specified file
-     *
-     * @param f Dir
-     * @return Available space for specified file in bytes
-     */
-    fun getFree(f: File?): Long {
-        var f = f
-        while (f?.exists()?.not() == true) {
-            f = f.parentFile
-            if (f == null) return 0
-        }
-        val fsi = StatFs(f?.path)
-        return if (VERSION.SDK_INT >= 18) {
-            fsi.blockSizeLong * fsi.availableBlocksLong
-        } else {
-            fsi.blockSize * fsi.availableBlocks.toLong()
-        }
-    }
 
     fun getAvailableInternalMemorySize(context: Context): Long {
         val file = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
@@ -343,16 +299,6 @@ object FileUtil {
             return Environment.MEDIA_MOUNTED == state || Environment.MEDIA_MOUNTED_READ_ONLY == state
         }
 
-    fun isFileInExternalStorage(context: Context, path: String?): Boolean {
-        var privateDir: String? = ""
-        try {
-            privateDir = getPrivateRecordsDir(context).absolutePath
-        } catch (e: FileNotFoundException) {
-            Log.e("TAG", e.message.toString())
-        }
-        return path == null || !path.contains(privateDir.toString())
-    }
-
     fun getPublicMusicStorageDir(albumName: String?): File {
         val file = File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_MUSIC), albumName)
@@ -444,45 +390,6 @@ object FileUtil {
         return ok
     }
 
-    private fun isVirtualFile(context: Context, uri: Uri): Boolean {
-        return if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
-            if (!DocumentsContract.isDocumentUri(context, uri)) {
-                return false
-            }
-            val cursor = context.contentResolver.query(
-                    uri, arrayOf(DocumentsContract.Document.COLUMN_FLAGS),
-                    null, null, null)
-            var flags = 0
-            if (cursor?.moveToFirst() == true) {
-                flags = cursor.getInt(0)
-            }
-            cursor?.close()
-            flags and DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT != 0
-        } else {
-            false
-        }
-    }
-
-    private fun getMimeType(url: String): String? {
-        var type: String? = null
-        val extension = MimeTypeMap.getFileExtensionFromUrl(url)
-        if (extension != null) {
-            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-        }
-        return type
-    }
-
-    private fun replaceFileWithDir(path: String): Boolean {
-        val file = File(path)
-        if (!file.exists()) {
-            return file.mkdirs()
-        } else if (file.delete()) {
-            val folder = File(path)
-            return folder.mkdirs()
-        }
-        return false
-    }
-
     fun copyFile(context: Context, uri: Uri): File? {
         try {
             val parcelFileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")
@@ -531,8 +438,4 @@ object FileUtil {
         throw CantCreateFileException()
     }
 
-    fun haxtoFloat(hsxString: String): Float {
-        val i = hsxString.toLong(16)
-        return java.lang.Float.intBitsToFloat(i.toInt())
-    }
 }

@@ -115,7 +115,6 @@ class PrefsImpl private constructor(context: Context) : Prefs {
         private const val PREF_KEY_IS_ASK_TO_RENAME_AFTER_STOP_RECORDING = "is_ask_rename_after_stop_recording"
         private const val PREF_KEY_ACTIVE_RECORD = "active_record"
         private const val PREF_KEY_RECORD_COUNTER = "record_counter"
-        private const val PREF_KEY_THEME_COLORMAP_POSITION = "theme_color"
         private const val PREF_KEY_KEEP_SCREEN_ON = "keep_screen_on"
         private const val PREF_KEY_FORMAT = "pref_format"
         private const val PREF_KEY_BITRATE = "pref_bitrate"

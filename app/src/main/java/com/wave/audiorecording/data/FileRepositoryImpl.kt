@@ -8,15 +8,6 @@ import java.io.File
 import java.io.FileNotFoundException
 
 class FileRepositoryImpl private constructor(context: Context, prefs: Prefs) : FileRepository {
-    //	@Override
-    //	public File getRecordFileByName(String name, String extension) {
-    //		File recordFile = new File(recordDirectory.getAbsolutePath() + File.separator + FileUtil.generateRecordNameCounted(prefs.getRecordCounter(), extension));
-    //		if (recordFile.exists() && recordFile.isFile()) {
-    //			return recordFile;
-    //		}
-    //		Timber.e("File %s was not found", recordFile.getAbsolutePath());
-    //		return null;
-    //	}
     override var recordingDir: File? = null
         private set
     private val prefs: Prefs
@@ -25,8 +16,7 @@ class FileRepositoryImpl private constructor(context: Context, prefs: Prefs) : F
     override fun provideRecordFile(): File {
         prefs.incrementRecordCounter()
         val recordFile: File?
-        val recordName: String
-        recordName = if (prefs.namingFormat == AppConstants.NAMING_COUNTED) {
+        val recordName: String = if (prefs.namingFormat == AppConstants.NAMING_COUNTED) {
             FileUtil.generateRecordNameCounted(prefs.recordCounter)
         } else {
             FileUtil.generateRecordNameDate()
