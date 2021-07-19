@@ -53,14 +53,6 @@ private constructor() {
         return mFileType
     }
 
-    fun getFileSizeBytes(): Int {
-        return mFileSize
-    }
-
-    fun getAvgBitrateKbps(): Int {
-        return mAvgBitRate
-    }
-
     fun getSampleRate(): Int {
         return mSampleRate
     }
@@ -557,78 +549,6 @@ private constructor() {
             Log.e("Ringdroid", "Failed to create the .m4a file.")
             Log.e("Ringdroid", getStackTrace(e))
         }
-    }
-
-    // Method used to swap the left and right channels (needed for stereo WAV files).
-    // buffer contains the PCM data: {sample 1 right, sample 1 left, sample 2 right, etc.}
-    // The size of a sample is assumed to be 16 bits (for a single channel).
-    // When done, buffer will contain {sample 1 left, sample 1 right, sample 2 left, etc.}
-    private fun swapLeftRightChannels(buffer: ByteArray) {
-        val left = ByteArray(2)
-        val right = ByteArray(2)
-        if (buffer.size % 4 != 0) {  // 2 channels, 2 bytes per sample (for one channel).
-            // Invalid buffer size.
-            return
-        }
-        var offset = 0
-        while (offset < buffer.size) {
-            left[0] = buffer[offset]
-            left[1] = buffer[offset + 1]
-            right[0] = buffer[offset + 2]
-            right[1] = buffer[offset + 3]
-            buffer[offset] = right[0]
-            buffer[offset + 1] = right[1]
-            buffer[offset + 2] = left[0]
-            buffer[offset + 3] = left[1]
-            offset += 4
-        }
-    }
-
-    @Throws(IOException::class)
-    fun WriteWAVFile(outputFile: File?, startTime: Float, endTime: Float) {
-        val startOffset = (startTime * mSampleRate).toInt() * 2 * mChannels
-        val numSamples = ((endTime - startTime) * mSampleRate).toInt()
-
-        // Start by writing the RIFF header.
-        val outputStream = FileOutputStream(outputFile)
-        outputStream.write(WAVHeader.Companion.getWAVHeader(mSampleRate, mChannels, numSamples))
-
-        // Write the samples to the file, 1024 at a time.
-        val buffer = ByteArray(1024 * mChannels * 2) // Each sample is coded with a short.
-        mDecodedBytes?.position(startOffset)
-        var numBytesLeft = numSamples * mChannels * 2
-        while (numBytesLeft >= buffer.size) {
-            if ((mDecodedBytes?.remaining() ?: 0) < buffer.size) {
-                // This should not happen.
-                for (i in (mDecodedBytes?.remaining() ?: 0) until buffer.size) {
-                    buffer[i] = 0 // pad with extra 0s to make a full frame.
-                }
-                mDecodedBytes?.get(buffer, 0, (mDecodedBytes?.remaining() ?: 0))
-            } else {
-                mDecodedBytes?.get(buffer)
-            }
-            if (mChannels == 2) {
-                swapLeftRightChannels(buffer)
-            }
-            outputStream.write(buffer)
-            numBytesLeft -= buffer.size
-        }
-        if (numBytesLeft > 0) {
-            if ((mDecodedBytes?.remaining() ?: 0) < numBytesLeft) {
-                // This should not happen.
-                for (i in (mDecodedBytes?.remaining() ?: 0) until numBytesLeft) {
-                    buffer[i] = 0 // pad with extra 0s to make a full frame.
-                }
-                mDecodedBytes?.get(buffer, 0, (mDecodedBytes?.remaining() ?: 0))
-            } else {
-                mDecodedBytes?.get(buffer, 0, numBytesLeft)
-            }
-            if (mChannels == 2) {
-                swapLeftRightChannels(buffer)
-            }
-            outputStream.write(buffer, 0, numBytesLeft)
-        }
-        outputStream.close()
     }
 
     // Return the stack trace of a given exception.

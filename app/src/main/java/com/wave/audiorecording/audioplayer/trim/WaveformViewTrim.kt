@@ -92,19 +92,6 @@ class WaveformViewTrim(context: Context?, attrs: AttributeSet?) : View(context, 
         return mInitialized
     }
 
-    fun getZoomLevel(): Int {
-        return mZoomLevel
-    }
-
-    fun setZoomLevel(zoomLevel: Int) {
-        while (mZoomLevel > zoomLevel) {
-            zoomIn()
-        }
-        while (mZoomLevel < zoomLevel) {
-            zoomOut()
-        }
-    }
-
     fun canZoomIn(): Boolean {
         return mZoomLevel > 0
     }

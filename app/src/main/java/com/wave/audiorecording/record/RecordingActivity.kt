@@ -141,19 +141,6 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
     private var audioButtonColor: String? = "0"
     private var audioRecordedPath: String? = ""
     private var presenter: RecordContract.UserActionsListener? = null
-    private val mTimerRunnable: Runnable = object : Runnable {
-        override fun run() {
-            if (mStartPos != mLastDisplayedStartPos) {
-                txtStartPosition?.text = formatTime(mStartPos)
-                mLastDisplayedStartPos = mStartPos
-            }
-            if (mEndPos != mLastDisplayedEndPos) {
-                txtEndPosition?.text = formatTime(mEndPos)
-                mLastDisplayedEndPos = mEndPos
-            }
-            mHandler?.postDelayed(this, 100)
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -1565,17 +1552,6 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-
-    private fun deleteRecordedAudio() {
-        deleteAlreadyRecordAudio = true
-        mLoadedSoundFile = null
-        if (mPlayer != null && mPlayer?.isPlaying() == true) {
-            mIsPlaying = false
-            mPlayer?.pause()
-        }
-        showPlayPause()
-        deleteRecord()
     }
 
     companion object {

@@ -102,24 +102,6 @@ object AndroidUtils {
         return byteBuffer.array()
     }
 
-    /**
-     * Convert byte array to int array
-     */
-    fun byte2int(src: ByteArray): IntArray {
-        val dstLength = src.size ushr 2
-        val dst = IntArray(dstLength)
-        for (i in 0 until dstLength) {
-            var j = i shl 2
-            var x = 0
-            x += (src[j++]).toInt() and 0xff shl 0
-            x += (src[j++]).toInt() and 0xff shl 8
-            x += (src[j++]).toInt() and 0xff shl 16
-            x += (src[j++]).toInt() and 0xff shl 24
-            dst[i] = x
-        }
-        return dst
-    }
-
     @JvmStatic
     fun getScreenWidth(context: Context): Int {
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
