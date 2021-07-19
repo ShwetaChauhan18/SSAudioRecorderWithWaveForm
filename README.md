@@ -1,7 +1,7 @@
 <a href="https://www.simform.com/"><img src="https://github.com/SimformSolutionsPvtLtd/SSToastMessage/blob/master/simformBanner.png"></a>
 # SSAudioRecorderWithWaveForm
 ## Audio recording with wave form
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)][git-repo-url] [![Kotlin Version](https://img.shields.io/badge/Kotlin-v1.5.20-blue.svg)](https://kotlinlang.org)  [![Platform](https://img.shields.io/badge/Platform-Android-green.svg?style=flat)](https://www.android.com/) [![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=23)
+[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)][git-repo-url] [![Kotlin Version](https://img.shields.io/badge/Kotlin-v1.5.21-blue.svg)](https://kotlinlang.org)  [![Platform](https://img.shields.io/badge/Platform-Android-green.svg?style=flat)](https://www.android.com/) [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 
 SSAudioRecorderWithWaveForm is recording audio with wave form data, you can record audio using the app and also you can also pickup already recorded audio from gallery. The best thing is our application is after recording we can trim that audio from start point to end point using slider.
 

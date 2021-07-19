@@ -94,38 +94,11 @@ class RecordingService : Service() {
         stopForegroundService()
     }
 
-    private fun createContentIntent(): PendingIntent {
-        val intent = Intent(applicationContext, RecordingActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
-        return PendingIntent.getActivity(applicationContext, 0, intent, 0)
-    }
-
     private fun stopForegroundService() {
         appRecorder?.removeRecordingCallback(appRecorderCallback)
         stopForeground(true)
         stopSelf()
         started = false
-    }
-
-    protected fun getPendingSelfIntent(context: Context?, action: String?): PendingIntent {
-        val intent = Intent(context, StopRecordingReceiver::class.java)
-        intent.action = action
-        return PendingIntent.getBroadcast(context, 10, intent, 0)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel(channelId: String, channelName: String): String {
-        val channel = notificationManager?.getNotificationChannel(channelId)
-        if (channel == null) {
-            val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
-            chan.lightColor = Color.BLUE
-            chan.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-            chan.setSound(null, null)
-            chan.enableLights(false)
-            chan.enableVibration(false)
-            notificationManager?.createNotificationChannel(chan)
-        }
-        return channelId
     }
 
     private fun updateNotificationPause() {

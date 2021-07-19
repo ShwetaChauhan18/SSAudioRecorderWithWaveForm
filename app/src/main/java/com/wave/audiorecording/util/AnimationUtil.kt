@@ -24,7 +24,6 @@ object AnimationUtil {
                 ?.start()
     }
 
-
     fun animation(view: View?) {
         val scaleDown = ObjectAnimator.ofPropertyValuesHolder(view,
                 PropertyValuesHolder.ofFloat("scaleX", 1.04f),
@@ -33,12 +32,6 @@ object AnimationUtil {
         scaleDown.repeatCount = ObjectAnimator.INFINITE
         scaleDown.repeatMode = ObjectAnimator.REVERSE
         scaleDown.start()
-    }
-
-    fun animation(mContext: Context?, view: View?, anim: Int, listener: Animation.AnimationListener?) {
-        val animation = AnimationUtils.loadAnimation(mContext, anim)
-        animation.setAnimationListener(listener)
-        view?.startAnimation(animation)
     }
 
     fun pauseButtonAnimation(view: View?, isAnimationStart: Boolean) {

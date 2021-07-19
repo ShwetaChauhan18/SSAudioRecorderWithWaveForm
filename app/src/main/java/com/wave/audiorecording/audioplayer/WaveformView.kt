@@ -430,45 +430,6 @@ class WaveformView : View {
         }
     }
 
-    private fun drawRecordingWaveform(canvas: Canvas) {
-        recordingData?.let {
-            if (it.size > 0) {
-                val half = measuredHeight / 2
-                path.reset()
-                var xPos = waveformShift.toFloat()
-                if (xPos < VIEW_DRAW_EDGE) {
-                    xPos = VIEW_DRAW_EDGE.toFloat()
-                }
-                path.moveTo(xPos, half.toFloat())
-                path.lineTo(xPos, half.toFloat())
-                val dpi = AndroidUtils.dpToPx(1)
-                var startPos = 1
-                if (waveformShift < 0) {
-                    startPos = (waveformShift * dpi).toInt()
-                }
-                for (i in startPos until it.size) {
-                    xPos = waveformShift + i * dpi
-                    if (xPos > VIEW_DRAW_EDGE && xPos < viewWidth - VIEW_DRAW_EDGE) {
-                        path.lineTo(xPos, (half - it[i]).toFloat())
-                    }
-                }
-                for (i in it.size - 1 downTo startPos) {
-                    xPos = waveformShift + i * dpi
-                    if (xPos > VIEW_DRAW_EDGE && xPos < viewWidth - VIEW_DRAW_EDGE) {
-                        path.lineTo(xPos, (half + 1 + it[i]).toFloat())
-                    }
-                }
-                xPos = waveformShift.toFloat()
-                if (xPos < VIEW_DRAW_EDGE) {
-                    xPos = VIEW_DRAW_EDGE.toFloat()
-                }
-                path.lineTo(xPos, half.toFloat())
-                path.close()
-                waveformPaint?.let { it1 -> canvas.drawPath(path, it1) }
-            }
-        }
-    }
-
     private fun drawRecordingWaveformForUpperWave(canvas: Canvas) {
         recordingData?.let {
             if (it.size > 0) {

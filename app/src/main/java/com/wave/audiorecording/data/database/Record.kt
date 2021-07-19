@@ -74,10 +74,6 @@ class Record {
         return name
     }
 
-    fun setBookmark(b: Boolean) {
-        isBookmarked = b
-    }
-
     override fun toString(): String {
         return "Record{" +
                 "id=" + id + '\'' +

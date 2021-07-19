@@ -135,36 +135,6 @@ object FileUtil {
         }
     }
 
-    /**
-     * Copy file.
-     *
-     * @param fileToCopy File to copy.
-     * @param newFile    File in which will contain copied data.
-     * @return true if copy succeed, otherwise - false.
-     */
-    @Throws(IOException::class)
-    fun copyFile(fileToCopy: File, newFile: File): Boolean {
-        Log.v("TAG", "copyFile toCOpy = " + fileToCopy.absolutePath + " newFile = " + newFile.absolutePath)
-        var `in`: FileInputStream? = null
-        var out: FileOutputStream? = null
-        return try {
-            `in` = FileInputStream(fileToCopy)
-            out = FileOutputStream(newFile)
-            if (copyLarge(`in`, out) > 0) {
-                true
-            } else {
-                Log.e("TAG", "Nothing was copied!")
-                false
-            }
-        } catch (e: Exception) {
-            false
-        } finally {
-            `in`?.close()
-            out?.close()
-        }
-    }
-
-
     fun getAvailableInternalMemorySize(context: Context): Long {
         val file = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
         return if (file != null) {
