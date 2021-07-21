@@ -48,7 +48,10 @@ object ActivityUtil {
      * @param activty
      */
     fun makeStatusBarBlackForThisTheme(activty: Activity, color: Int) {
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP && VERSION.SDK_INT < VERSION_CODES.M && activty.window != null && !isColorDark(color)) {
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP && VERSION.SDK_INT < VERSION_CODES.M && activty.window != null && !isColorDark(
+                color
+            )
+        ) {
             activty.window.statusBarColor = activty.resources.getColor(R.color.black)
         }
     }
@@ -75,7 +78,10 @@ object ActivityUtil {
      * @return
      */
     fun isColorDark(color: Int): Boolean {
-        val darkness: Double = 1 - (Constants.Intents.Companion.NUMBER_0_POINT_299 * Color.red(color) + Constants.Intents.Companion.NUMBER_0_POINT_587 * Color.green(color) + Constants.Intents.Companion.NUMBER_0_POINT_114 * Color.blue(color)) / Constants.Intents.Companion.NUMBER_255
+        val darkness: Double =
+            1 - (Constants.Intents.Companion.NUMBER_0_POINT_299 * Color.red(color) + Constants.Intents.Companion.NUMBER_0_POINT_587 * Color.green(
+                color
+            ) + Constants.Intents.Companion.NUMBER_0_POINT_114 * Color.blue(color)) / Constants.Intents.Companion.NUMBER_255
         return darkness >= 0.5
     }
 

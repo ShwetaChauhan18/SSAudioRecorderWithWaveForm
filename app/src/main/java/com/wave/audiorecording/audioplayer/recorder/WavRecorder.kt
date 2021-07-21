@@ -50,25 +50,29 @@ class WavRecorder private constructor() : RecorderContract.Recorder {
         this.channelCount = channelCount
         recordFile = File(outputFile)
         if (recordFile?.exists() == true && recordFile?.isFile == true) {
-            val channel = if (channelCount == 1) AudioFormat.CHANNEL_IN_MONO else AudioFormat.CHANNEL_IN_STEREO
+            val channel =
+                if (channelCount == 1) AudioFormat.CHANNEL_IN_MONO else AudioFormat.CHANNEL_IN_STEREO
             try {
-                bufferSize = AudioRecord.getMinBufferSize(sampleRate,
-                        channel,
-                        AudioFormat.ENCODING_PCM_16BIT)
+                bufferSize = AudioRecord.getMinBufferSize(
+                    sampleRate, channel, AudioFormat.ENCODING_PCM_16BIT
+                )
                 if (bufferSize == AudioRecord.ERROR || bufferSize == AudioRecord.ERROR_BAD_VALUE) {
-                    bufferSize = AudioRecord.getMinBufferSize(sampleRate,
-                            channel,
-                            AudioFormat.ENCODING_PCM_16BIT)
+                    bufferSize = AudioRecord.getMinBufferSize(
+                        sampleRate, channel, AudioFormat.ENCODING_PCM_16BIT
+                    )
                 }
                 recorder = AudioRecord(
-                        MediaRecorder.AudioSource.MIC,
-                        sampleRate,
-                        channel,
-                        AudioFormat.ENCODING_PCM_16BIT,
-                        bufferSize
+                    MediaRecorder.AudioSource.MIC,
+                    sampleRate,
+                    channel,
+                    AudioFormat.ENCODING_PCM_16BIT,
+                    bufferSize
                 )
             } catch (e: IllegalArgumentException) {
-                Log.e("WavRecorder", "sampleRate = $sampleRate channel = $channel bufferSize = $bufferSize")
+                Log.e(
+                    "WavRecorder",
+                    "sampleRate = $sampleRate channel = $channel bufferSize = $bufferSize"
+                )
                 if (recorder != null) {
                     recorder?.release()
                 }
@@ -186,7 +190,7 @@ class WavRecorder private constructor() : RecorderContract.Recorder {
                                 fos.write(data)
                             } catch (e: IOException) {
                                 Log.e("WavRecorder", e.message.toString())
-                                AndroidUtils.runOnUIThread( {
+                                AndroidUtils.runOnUIThread({
                                     recorderCallback?.onError(RecordingException())
                                     stopRecording()
                                 })
@@ -207,11 +211,20 @@ class WavRecorder private constructor() : RecorderContract.Recorder {
     private fun setWaveFileHeader(file: File?, channels: Int) {
         val fileSize = (file?.length() ?: 0) - 8
         val totalSize = fileSize + 36
-        val byteRate = (sampleRate * channels * (RECORDER_BPP / 8)).toLong() //2 byte per 1 sample for 1 channel.
+        val byteRate =
+            (sampleRate * channels * (RECORDER_BPP / 8)).toLong() //2 byte per 1 sample for 1 channel.
         try {
             val wavFile = randomAccessFile(file)
             wavFile.seek(0) // to the beginning
-            wavFile.write(generateHeader(fileSize, totalSize, sampleRate.toLong(), channels, byteRate))
+            wavFile.write(
+                generateHeader(
+                    fileSize,
+                    totalSize,
+                    sampleRate.toLong(),
+                    channels,
+                    byteRate
+                )
+            )
             wavFile.close()
         } catch (e: FileNotFoundException) {
             Log.e("WavRecorder", e.message.toString())
@@ -231,8 +244,8 @@ class WavRecorder private constructor() : RecorderContract.Recorder {
     }
 
     private fun generateHeader(
-            totalAudioLen: Long, totalDataLen: Long, longSampleRate: Long, channels: Int,
-            byteRate: Long): ByteArray {
+        totalAudioLen: Long, totalDataLen: Long, longSampleRate: Long, channels: Int, byteRate: Long
+    ): ByteArray {
         val header = ByteArray(44)
         header[0] = 'R'.toByte() // RIFF/WAVE header
         header[1] = 'I'.toByte()
@@ -310,6 +323,7 @@ class WavRecorder private constructor() : RecorderContract.Recorder {
 
     companion object {
         private const val RECORDER_BPP = 16 //bits per sample
+
         @JvmStatic
         val instance: WavRecorder
             get() = WavRecorderSingletonHolder.singleton

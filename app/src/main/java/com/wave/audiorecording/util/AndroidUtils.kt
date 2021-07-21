@@ -2,7 +2,6 @@ package com.wave.audiorecording.util
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.res.Resources
@@ -10,11 +9,7 @@ import android.graphics.Point
 import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.util.Log
-import android.view.View
-import android.view.Window
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
 import com.wave.audiorecording.AudioRecordingWavesApplication
 import com.wave.audiorecording.R
@@ -88,7 +83,12 @@ object AndroidUtils {
         if (delay == 0L) {
             runnable?.let { AudioRecordingWavesApplication.applicationHandler?.post(it) }
         } else {
-            runnable?.let { AudioRecordingWavesApplication.applicationHandler?.postDelayed(it, delay) }
+            runnable?.let {
+                AudioRecordingWavesApplication.applicationHandler?.postDelayed(
+                    it,
+                    delay
+                )
+            }
         }
     }
 
@@ -147,23 +147,25 @@ object AndroidUtils {
     }
 
     @JvmOverloads
-    fun showSimpleDialog(activity: Activity?, icon: Int, resTitle: Int, resContent: String?,
-                         positiveListener: DialogInterface.OnClickListener?,
-                         negativeListener: DialogInterface.OnClickListener? = null) {
+    fun showSimpleDialog(
+        activity: Activity?,
+        icon: Int,
+        resTitle: Int,
+        resContent: String?,
+        positiveListener: DialogInterface.OnClickListener?,
+        negativeListener: DialogInterface.OnClickListener? = null
+    ) {
         val builder = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.AlertDialogCustom))
-        builder.setTitle(resTitle)
-                .setIcon(icon)
-                .setMessage(resContent)
-                .setCancelable(false)
-                .setPositiveButton(R.string.btn_yes) { dialog, id ->
-                    positiveListener?.onClick(dialog, id)
-                    dialog.dismiss()
-                }
-                .setNegativeButton(R.string.btn_no
-                ) { dialog, id ->
-                    negativeListener?.onClick(dialog, id)
-                    dialog.dismiss()
-                }
+        builder.setTitle(resTitle).setIcon(icon).setMessage(resContent).setCancelable(false)
+            .setPositiveButton(R.string.btn_yes) { dialog, id ->
+                positiveListener?.onClick(dialog, id)
+                dialog.dismiss()
+            }.setNegativeButton(
+                R.string.btn_no
+            ) { dialog, id ->
+                negativeListener?.onClick(dialog, id)
+                dialog.dismiss()
+            }
         val alert = builder.create()
         alert.show()
     }

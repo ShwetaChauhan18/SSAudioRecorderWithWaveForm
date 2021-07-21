@@ -10,6 +10,7 @@ class BackgroundQueue(threadName: String?) : Thread() {
     @Volatile
     private var handler: Handler? = null
     private val countDownLatch = CountDownLatch(1)
+
     @JvmOverloads
     fun postRunnable(runnable: Runnable?, delay: Long = 0) {
         try {
@@ -40,7 +41,7 @@ class BackgroundQueue(threadName: String?) : Thread() {
 
     override fun run() {
         Looper.prepare()
-        handler = object : Handler() {
+        handler = object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
                 this@BackgroundQueue.handleMessage(msg)
             }

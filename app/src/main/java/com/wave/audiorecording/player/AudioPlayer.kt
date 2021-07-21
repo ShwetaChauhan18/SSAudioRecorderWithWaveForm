@@ -233,7 +233,7 @@ class AudioPlayer private constructor() : Player, OnPreparedListener {
     }
 
     private fun onPreparePlay() {
-        if (!actionsListeners.isEmpty()) {
+        if (actionsListeners.isNotEmpty()) {
             for (i in actionsListeners.indices) {
                 actionsListeners[i].onPreparePlay()
             }
@@ -241,7 +241,7 @@ class AudioPlayer private constructor() : Player, OnPreparedListener {
     }
 
     private fun onStartPlay() {
-        if (!actionsListeners.isEmpty()) {
+        if (actionsListeners.isNotEmpty()) {
             for (i in actionsListeners.indices) {
                 actionsListeners[i].onStartPlay()
             }
@@ -249,7 +249,7 @@ class AudioPlayer private constructor() : Player, OnPreparedListener {
     }
 
     private fun onPlayProgress(mills: Long) {
-        if (!actionsListeners.isEmpty()) {
+        if (actionsListeners.isNotEmpty()) {
             for (i in actionsListeners.indices) {
                 actionsListeners[i].onPlayProgress(mills)
             }
@@ -257,7 +257,7 @@ class AudioPlayer private constructor() : Player, OnPreparedListener {
     }
 
     private fun onStopPlay() {
-        if (!actionsListeners.isEmpty()) {
+        if (actionsListeners.isNotEmpty()) {
             for (i in actionsListeners.indices.reversed()) {
                 actionsListeners[i].onStopPlay()
             }
@@ -265,7 +265,7 @@ class AudioPlayer private constructor() : Player, OnPreparedListener {
     }
 
     private fun onPausePlay() {
-        if (!actionsListeners.isEmpty()) {
+        if (actionsListeners.isNotEmpty()) {
             for (i in actionsListeners.indices) {
                 actionsListeners[i].onPausePlay()
             }
@@ -273,7 +273,7 @@ class AudioPlayer private constructor() : Player, OnPreparedListener {
     }
 
     private fun onSeek(mills: Long) {
-        if (!actionsListeners.isEmpty()) {
+        if (actionsListeners.isNotEmpty()) {
             for (i in actionsListeners.indices) {
                 actionsListeners[i].onSeek(mills)
             }
@@ -281,7 +281,7 @@ class AudioPlayer private constructor() : Player, OnPreparedListener {
     }
 
     private fun onError(throwable: AppException) {
-        if (!actionsListeners.isEmpty()) {
+        if (actionsListeners.isNotEmpty()) {
             for (i in actionsListeners.indices) {
                 actionsListeners[i].onError(throwable)
             }

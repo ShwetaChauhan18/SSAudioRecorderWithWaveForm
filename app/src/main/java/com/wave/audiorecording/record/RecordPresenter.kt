@@ -4,8 +4,8 @@ import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
-import com.wave.audiorecording.BackgroundQueue
 import com.wave.audiorecording.AudioRecordingWavesApplication
+import com.wave.audiorecording.BackgroundQueue
 import com.wave.audiorecording.R
 import com.wave.audiorecording.app.AppRecorder
 import com.wave.audiorecording.app.AppRecorderCallback
