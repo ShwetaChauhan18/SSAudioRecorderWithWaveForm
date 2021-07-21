@@ -78,7 +78,11 @@ class WaveformView : View {
         init(context)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         init(context)
     }
 
@@ -100,7 +104,8 @@ class WaveformView : View {
 
         /*gridPaint = new Paint();
 		gridPaint.setColor(context.getResources().getColor(R.color.md_blue_gray_500));
-		gridPaint.setStrokeWidth(AndroidUtils.dpToPx(1)/2);*/textHeight = context.resources.getDimension(R.dimen.text_normal)
+		gridPaint.setStrokeWidth(AndroidUtils.dpToPx(1)/2);*/textHeight =
+            context.resources.getDimension(R.dimen.text_normal)
         inset = textHeight + PADD
         /*textPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
 		textPaint.setColor(context.getResources().getColor(R.color.md_blue_gray_500));
@@ -131,7 +136,11 @@ class WaveformView : View {
                             shift = 0
                         }
                         if (onSeekListener != null) {
-                            onSeekListener?.onSeeking(-screenShift, AndroidUtils.convertPxToMills(-screenShift.toLong(), pxPerSecond).toLong())
+                            onSeekListener?.onSeeking(
+                                -screenShift,
+                                AndroidUtils.convertPxToMills(-screenShift.toLong(), pxPerSecond)
+                                    .toLong()
+                            )
                         }
                         playProgressPx = -shift
                         updateShifts(shift)
@@ -139,7 +148,11 @@ class WaveformView : View {
                     }
                     MotionEvent.ACTION_UP -> {
                         if (onSeekListener != null) {
-                            onSeekListener?.onSeek(-screenShift, AndroidUtils.convertPxToMills(-screenShift.toLong(), pxPerSecond).toLong())
+                            onSeekListener?.onSeek(
+                                -screenShift,
+                                AndroidUtils.convertPxToMills(-screenShift.toLong(), pxPerSecond)
+                                    .toLong()
+                            )
                         }
                         prevScreenShift = screenShift
                         readPlayProgress = true
@@ -172,7 +185,6 @@ class WaveformView : View {
         moveAnimator.start()
     }
 
-
     /**
      * Set new current play position in pixels.
      *
@@ -184,7 +196,10 @@ class WaveformView : View {
         prevScreenShift = screenShift
         invalidate()
         if (onSeekListener != null) {
-            onSeekListener?.onSeeking(-screenShift, AndroidUtils.convertPxToMills(-screenShift.toLong(), pxPerSecond).toLong())
+            onSeekListener?.onSeeking(
+                -screenShift,
+                AndroidUtils.convertPxToMills(-screenShift.toLong(), pxPerSecond).toLong()
+            )
         }
     }
 
@@ -297,8 +312,8 @@ class WaveformView : View {
         waveformShift = screenShift + viewWidth / 2
         prevScreenShift = screenShift
         setMeasuredDimension(
-                resolveSize(width, widthMeasureSpec),
-                heightMeasureSpec)
+            resolveSize(width, widthMeasureSpec), heightMeasureSpec
+        )
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -329,11 +344,22 @@ class WaveformView : View {
 
             //Draw waveform start indication
             waveformPaint?.let {
-                canvas.drawLine(waveformShift.toFloat(), inset, waveformShift.toFloat(), measuredHeight - inset, it)
+                canvas.drawLine(
+                    waveformShift.toFloat(),
+                    inset,
+                    waveformShift.toFloat(),
+                    measuredHeight - inset,
+                    it
+                )
 
                 //Draw waveform end indication
-                canvas.drawLine(waveformShift + (waveformData?.size ?: 0) * density, inset,
-                        waveformShift + (waveformData?.size ?: 0) * density, measuredHeight - inset, it)
+                canvas.drawLine(
+                    waveformShift + (waveformData?.size ?: 0) * density,
+                    inset,
+                    waveformShift + (waveformData?.size ?: 0) * density,
+                    measuredHeight - inset,
+                    it
+                )
 
             }
         }
@@ -368,7 +394,8 @@ class WaveformView : View {
 
             //Draw seconds marks
             val xPos = i * DEFAULT_PIXEL_PER_SECOND + gridShift
-            val mills = ((-waveformShift / DEFAULT_PIXEL_PER_SECOND + gridShift / DEFAULT_PIXEL_PER_SECOND + i) * 1000).toLong()
+            val mills =
+                ((-waveformShift / DEFAULT_PIXEL_PER_SECOND + gridShift / DEFAULT_PIXEL_PER_SECOND + i) * 1000).toLong()
             if (mills >= 0) {
                 val text = TimeUtils.formatTimeIntervalMinSec(mills)
             }
@@ -401,7 +428,8 @@ class WaveformView : View {
 
             //Draw seconds marks
             val xPos = i * pxPerMark + gridShift
-            val mills = ((-waveformShift / pxPerSecond + gridShift / pxPerSecond + secPerMark * i) * 1000).toLong()
+            val mills =
+                ((-waveformShift / pxPerSecond + gridShift / pxPerSecond + secPerMark * i) * 1000).toLong()
             if (mills >= 0) {
                 val text = TimeUtils.formatTimeIntervalMinSec(mills)
             }
@@ -527,7 +555,8 @@ class WaveformView : View {
     }
 
     companion object {
-        private val DEFAULT_PIXEL_PER_SECOND = AndroidUtils.dpToPx(AppConstants.SHORT_RECORD_DP_PER_SECOND.toFloat()).toInt()
+        private val DEFAULT_PIXEL_PER_SECOND =
+            AndroidUtils.dpToPx(AppConstants.SHORT_RECORD_DP_PER_SECOND.toFloat()).toInt()
         private val PADD = AndroidUtils.dpToPx(6)
         private const val VIEW_DRAW_EDGE = 0
         private const val ANIMATION_DURATION = 330 //mills.

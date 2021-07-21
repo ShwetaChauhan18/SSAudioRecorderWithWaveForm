@@ -25,7 +25,13 @@ object TimeUtils {
         return if (numHour == 0L) {
             String.format(Locale.getDefault(), "%02d:%02d", numMinutes, numSeconds % 60)
         } else {
-            String.format(Locale.getDefault(), "%02d:%02d:%02d", numHour, numMinutes % 60, numSeconds % 60)
+            String.format(
+                Locale.getDefault(),
+                "%02d:%02d:%02d",
+                numHour,
+                numMinutes % 60,
+                numSeconds % 60
+            )
         }
     }
 

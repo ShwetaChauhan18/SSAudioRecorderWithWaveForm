@@ -1,19 +1,13 @@
 package com.wave.audiorecording.app
 
 import android.app.Notification
-import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import android.widget.RemoteViews
-import androidx.annotation.RequiresApi
 import com.wave.audiorecording.AudioRecordingWavesApplication
 import com.wave.audiorecording.exception.AppException
 import com.wave.audiorecording.player.PlayerContract.Player

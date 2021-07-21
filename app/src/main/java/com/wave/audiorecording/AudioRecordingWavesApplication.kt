@@ -2,22 +2,16 @@ package com.wave.audiorecording
 
 import android.app.Application
 import android.os.Handler
-import android.provider.Settings
-import android.util.Log
 import androidx.lifecycle.LifecycleObserver
 import com.wave.audiorecording.util.AndroidUtils.getScreenWidth
 import com.wave.audiorecording.util.AndroidUtils.pxToDp
 import com.wave.audiorecording.util.AppConstants
-import com.wave.audiorecording.util.DeviceUtils.isTabletDevice
 import com.wave.audiorecording.util.Injector
 
 class AudioRecordingWavesApplication : Application(), LifecycleObserver {
     override fun onCreate() {
         super.onCreate()
-        Log.i(TAG, "${BuildConfig.VERSION_NAME} |${BuildConfig.VERSION_CODE}|")
-        // test
-        Log.i(TAG, "Initializing " + (if (isTabletDevice(this)) "tablet" else "phone") + " version")
-        androidId = Settings.Secure.getString(applicationContext.contentResolver, Settings.Secure.ANDROID_ID)
+
         initializeAudio()
     }
 
@@ -37,13 +31,10 @@ class AudioRecordingWavesApplication : Application(), LifecycleObserver {
     }
 
     companion object {
-        private val TAG = AudioRecordingWavesApplication::class.java.simpleName
 
         @Volatile
         var applicationHandler: Handler? = null
         var injector: Injector? = null
-        var androidId: String? = null
-            private set
 
         /**
          * Screen width in dp

@@ -108,7 +108,13 @@ class AudioDecoder private constructor() {
                         if (advanced) {
                             codec.queueInputBuffer(index, 0, total, sampleTime, 0)
                         } else {
-                            codec.queueInputBuffer(index, 0, 0, -1, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
+                            codec.queueInputBuffer(
+                                index,
+                                0,
+                                0,
+                                -1,
+                                MediaCodec.BUFFER_FLAG_END_OF_STREAM
+                            )
                             mInputEOS = true
                         }
                     } else {
@@ -119,7 +125,13 @@ class AudioDecoder private constructor() {
                             codec.queueInputBuffer(index, 0, result, sampleTime, 0)
                             extractor.advance()
                         } else {
-                            codec.queueInputBuffer(index, 0, 0, -1, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
+                            codec.queueInputBuffer(
+                                index,
+                                0,
+                                0,
+                                -1,
+                                MediaCodec.BUFFER_FLAG_END_OF_STREAM
+                            )
                             mInputEOS = true
                         }
                     }
@@ -130,7 +142,11 @@ class AudioDecoder private constructor() {
                 }
             }
 
-            override fun onOutputBufferAvailable(codec: MediaCodec, index: Int, info: MediaCodec.BufferInfo) {
+            override fun onOutputBufferAvailable(
+                codec: MediaCodec,
+                index: Int,
+                info: MediaCodec.BufferInfo
+            ) {
                 val outputBuffer = codec.getOutputBuffer(index)
                 if (outputBuffer != null) {
                     outputBuffer.rewind()
@@ -160,7 +176,8 @@ class AudioDecoder private constructor() {
                         }
                     }
                 }
-                mOutputEOS = mOutputEOS or (info.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0)
+                mOutputEOS =
+                    mOutputEOS or (info.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0)
                 codec.releaseOutputBuffer(index, false)
                 if (mOutputEOS) {
                     decodeListener.onFinishDecode(gains?.getData(), duration)
@@ -183,7 +200,9 @@ class AudioDecoder private constructor() {
     companion object {
         private const val QUEUE_INPUT_BUFFER_EFFECTIVE = 1 // Most effective and fastest
         private const val QUEUE_INPUT_BUFFER_SIMPLE = 2 // Less effective and slower
-        private val SUPPORTED_EXT = arrayOf("mp3", "wav", "3gpp", "3gp", "amr", "aac", "m4a", "mp4", "ogg", "flac")
+        private val SUPPORTED_EXT =
+            arrayOf("mp3", "wav", "3gpp", "3gp", "amr", "aac", "m4a", "mp4", "ogg", "flac")
+
         @JvmStatic
         fun decode(fileName: String, decodeListener: DecodeListener) {
             try {

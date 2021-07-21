@@ -3,16 +3,11 @@ package com.wave.audiorecording.util
 import android.content.Context
 import android.net.Uri
 import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.os.Environment
 import android.os.StatFs
-import android.provider.DocumentsContract
 import android.provider.OpenableColumns
 import android.util.Log
-import android.webkit.MimeTypeMap
 import com.wave.audiorecording.exception.CantCreateFileException
-import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileInputStream
@@ -41,7 +36,7 @@ object FileUtil {
     @Throws(FileNotFoundException::class)
     fun getPrivateRecordsDir(context: Context): File {
         return getPrivateMusicStorageDir(context, AppConstants.RECORDS_DIR)
-                ?: throw FileNotFoundException()
+            ?: throw FileNotFoundException()
     }
 
     fun generateRecordNameCounted(counter: Long): String {
@@ -77,7 +72,12 @@ object FileUtil {
      */
     @JvmOverloads
     @Throws(IOException::class)
-    fun copyLarge(input: InputStream, output: OutputStream, buffer: ByteArray? = ByteArray(DEFAULT_BUFFER_SIZE), listener: OnCopyListener? = null): Long {
+    fun copyLarge(
+        input: InputStream,
+        output: OutputStream,
+        buffer: ByteArray? = ByteArray(DEFAULT_BUFFER_SIZE),
+        listener: OnCopyListener? = null
+    ): Long {
         var count: Long = 0
         var n: Int
         val size = input.available().toLong()
@@ -164,8 +164,7 @@ object FileUtil {
     }
 
     fun externalMemoryAvailable(): Boolean {
-        return Environment.getExternalStorageState() ==
-                Environment.MEDIA_MOUNTED
+        return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
     }
 
     /**
@@ -215,7 +214,10 @@ object FileUtil {
                         Log.d(LOG_TAG, "Dirs are successfully created")
                         return dir
                     } else {
-                        Log.e(LOG_TAG, "Dirs are NOT created! Please check permission write to external storage!")
+                        Log.e(
+                            LOG_TAG,
+                            "Dirs are NOT created! Please check permission write to external storage!"
+                        )
                     }
                 } catch (e: Exception) {
                     Log.e("TAG", e.message.toString())
@@ -270,8 +272,11 @@ object FileUtil {
         }
 
     fun getPublicMusicStorageDir(albumName: String?): File {
-        val file = File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_MUSIC), albumName)
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_MUSIC
+            ), albumName
+        )
         if (!file.mkdirs()) {
             Log.e(LOG_TAG, "Directory not created")
         }
@@ -296,7 +301,8 @@ object FileUtil {
             return false
         }
         Log.v("TAG", "old File: " + file.absolutePath)
-        val renamed = File(file.parentFile.absolutePath + File.separator + newName + AppConstants.EXTENSION_SEPARATOR + extension)
+        val renamed =
+            File(file.parentFile.absolutePath + File.separator + newName + AppConstants.EXTENSION_SEPARATOR + extension)
         Log.v("TAG", "new File: " + renamed.absolutePath)
         if (!file.renameTo(renamed)) {
             if (!file.renameTo(renamed)) {

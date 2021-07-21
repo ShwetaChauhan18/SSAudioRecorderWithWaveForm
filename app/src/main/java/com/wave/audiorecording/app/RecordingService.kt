@@ -1,25 +1,19 @@
 package com.wave.audiorecording.app
 
 import android.app.Notification
-import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.os.Build
 import android.os.IBinder
 import android.widget.RemoteViews
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import com.wave.audiorecording.AudioRecordingWavesApplication
 import com.wave.audiorecording.R
 import com.wave.audiorecording.data.FileRepository
 import com.wave.audiorecording.data.database.Record
 import com.wave.audiorecording.exception.AppException
-import com.wave.audiorecording.record.RecordingActivity
 import com.wave.audiorecording.util.AndroidUtils
 import com.wave.audiorecording.util.AppConstants
 import java.io.File
@@ -54,10 +48,17 @@ class RecordingService : Service() {
             override fun onRecordFinishProcessing() {}
             override fun onRecordingStopped(file: File?, rec: Record?) {}
             override fun onRecordingProgress(mills: Long, amp: Int) {
-                if (mills % (5 * AppConstants.VISUALIZATION_INTERVAL * AppConstants.SHORT_RECORD_DP_PER_SECOND) == 0L && fileRepository?.hasAvailableSpace(applicationContext)?.not() == true) {
+                if (mills % (5 * AppConstants.VISUALIZATION_INTERVAL * AppConstants.SHORT_RECORD_DP_PER_SECOND) == 0L && fileRepository?.hasAvailableSpace(
+                        applicationContext
+                    )?.not() == true
+                ) {
                     AndroidUtils.runOnUIThread({
                         stopRecording()
-                        Toast.makeText(applicationContext, R.string.error_no_available_space, Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            applicationContext,
+                            R.string.error_no_available_space,
+                            Toast.LENGTH_LONG
+                        ).show()
                     })
                 }
             }

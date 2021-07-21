@@ -62,8 +62,7 @@ import java.io.File
 import java.io.RandomAccessFile
 
 class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClickListener,
-    MarkerListener, WaveformListener,
-    Toolbar.OnMenuItemClickListener {
+    MarkerListener, WaveformListener, Toolbar.OnMenuItemClickListener {
     private var waveformView: WaveformView? = null
     private var ivPlaceholder: TextView? = null
     private var btnRecord: ImageButton? = null
@@ -312,8 +311,7 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
     private fun setNavigationCloseIconVisibility(isVisible: Boolean) {
         if (isVisible) {
             topAppBar.setNavigationIcon(R.drawable.ic_close)
-        } else
-            topAppBar.setNavigationIcon(null)
+        } else topAppBar.setNavigationIcon(null)
     }
 
     private fun setDownloadIconVisibility(isVisible: Boolean) {
@@ -542,10 +540,7 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         txtName?.isFocusable = true
         txtName?.text = ""
         txtName?.setCompoundDrawablesWithIntrinsicBounds(
-            null,
-            null,
-            getDrawable(R.drawable.ic_pencil_small),
-            null
+            null, null, getDrawable(R.drawable.ic_pencil_small), null
         )
         txtName?.visibility = View.INVISIBLE
         btnRecordStop?.setImageResource(R.drawable.ic_pause_blue)
@@ -631,8 +626,7 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
     override fun showPlayPause() {
         audioWaveform?.setPlayback(
             audioWaveform?.millisecsToPixels(
-                mPlayer?.getCurrentPosition()
-                    ?: 0
+                mPlayer?.getCurrentPosition() ?: 0
             ) ?: 0
         )
         btnImgPlay?.setImageResource(R.drawable.ic_play)
@@ -726,26 +720,22 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
     }
 
     override fun askDeleteRecord(name: String?) {
-        AndroidUtils.showSimpleDialog(
-            this@RecordingActivity,
+        AndroidUtils.showSimpleDialog(this@RecordingActivity,
             R.drawable.ic_delete_forever,
             R.string.warning,
             applicationContext.getString(R.string.delete_record, name),
-            { dialog, which -> presenter?.deleteActiveRecord(false) }
-        )
+            { dialog, which -> presenter?.deleteActiveRecord(false) })
     }
 
     override fun askDeleteRecordForever() {
-        AndroidUtils.showSimpleDialog(
-            this@RecordingActivity,
+        AndroidUtils.showSimpleDialog(this@RecordingActivity,
             R.drawable.ic_delete_forever,
             R.string.warning,
             applicationContext.getString(R.string.delete_this_record),
             { dialog, which ->
                 deleteRecord = true
                 presenter?.stopRecording(true)
-            }
-        )
+            })
     }
 
     override fun deleteRecord() {
@@ -801,14 +791,12 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         val container = LinearLayout(applicationContext)
         container.orientation = LinearLayout.VERTICAL
         val containerLp = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
         container.layoutParams = containerLp
         val editText = EditText(applicationContext)
         val lp = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
         editText.layoutParams = lp
         editText.addTextChangedListener(object : TextWatcher {
@@ -823,8 +811,7 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         })
         editText.setTextColor(resources.getColor(R.color.text_primary_light))
         editText.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            resources.getDimension(R.dimen.text_medium)
+            TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.text_medium)
         )
         val pad = resources.getDimension(R.dimen.spacing_normal).toInt()
         val params = MarginLayoutParams(editText.layoutParams)
@@ -842,15 +829,15 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
     private fun checkStoragePermissionImport(): Boolean {
         if (presenter?.isStorePublic == true) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                    && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     requestPermissions(
                         arrayOf(
                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
                             Manifest.permission.READ_EXTERNAL_STORAGE
-                        ),
-                        REQ_CODE_READ_EXTERNAL_STORAGE_IMPORT
+                        ), REQ_CODE_READ_EXTERNAL_STORAGE_IMPORT
                     )
                     return false
                 }
@@ -858,7 +845,6 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         }
         return true
     }
-
 
     private fun checkRecordPermission2(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -874,19 +860,18 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         if (presenter?.isStorePublic == true) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    AndroidUtils.showSimpleDialog(
-                        this@RecordingActivity,
+                    AndroidUtils.showSimpleDialog(this@RecordingActivity,
                         R.mipmap.ic_launcher,
                         R.string.warning,
                         getString(R.string.need_write_permission),
-                        { dialog, which -> requestPermissions(
-                            arrayOf(
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.READ_EXTERNAL_STORAGE
-                            ),
-                            REQ_CODE_WRITE_EXTERNAL_STORAGE
-                        ) }
-                    )
+                        { dialog, which ->
+                            requestPermissions(
+                                arrayOf(
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE
+                                ), REQ_CODE_WRITE_EXTERNAL_STORAGE
+                            )
+                        })
                     return false
                 }
             }
@@ -895,9 +880,7 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
     ) {
         if (requestCode == REQ_CODE_REC_AUDIO_AND_WRITE_EXTERNAL && grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
             visibleViewsAfterPermissionGranted()
@@ -913,9 +896,7 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
             startFileSelector()
         } else if (requestCode == REQ_CODE_READ_EXTERNAL_STORAGE_PLAYBACK && grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
             presenter?.startPlayback()
-        } else if (requestCode == REQ_CODE_WRITE_EXTERNAL_STORAGE && grantResults.size > 0 && (grantResults[0] == PackageManager.PERMISSION_DENIED
-                    || grantResults[1] == PackageManager.PERMISSION_DENIED)
-        ) {
+        } else if (requestCode == REQ_CODE_WRITE_EXTERNAL_STORAGE && grantResults.size > 0 && (grantResults[0] == PackageManager.PERMISSION_DENIED || grantResults[1] == PackageManager.PERMISSION_DENIED)) {
             presenter?.setStoragePrivate(applicationContext)
             visibleViewsAfterPermissionGranted()
         }
@@ -1028,8 +1009,7 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         if (isReset == 1) {
             mStartPos = audioWaveform?.secondsToPixels(0.0) ?: 0
             mEndPos = audioWaveform?.secondsToPixels(
-                audioWaveform?.pixelsToSeconds(mMaxPos)
-                    ?: 0.toDouble()
+                audioWaveform?.pixelsToSeconds(mMaxPos) ?: 0.toDouble()
             ) ?: 0
         }
         if (audioWaveform != null && audioWaveform?.isInitialized() == true) {
@@ -1128,8 +1108,7 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
         }
         audioWaveform?.let { audioWaveform ->
             var params = RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
             )
             markerStart?.let {
                 params.setMargins(
@@ -1142,22 +1121,17 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
                 it.layoutParams = params
             }
             params = RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
             )
             txtStartPosition?.let {
                 params.setMargins(
-                    startTextX,
-                    mTextTopOffset,
-                    -it.width,
-                    -it.height
+                    startTextX, mTextTopOffset, -it.width, -it.height
                 )
 
                 it.layoutParams = params
             }
             params = RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
             )
             markerEnd?.let {
                 params.setMargins(
@@ -1170,12 +1144,12 @@ class RecordingActivity : AppCompatActivity(), RecordContract.View, View.OnClick
                 it.layoutParams = params
             }
             params = RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
             )
             txtEndPosition?.let {
                 params.setMargins(
-                    endTextX, audioWaveform.measuredHeight - it.height - mTextBottomOffset,
+                    endTextX,
+                    audioWaveform.measuredHeight - it.height - mTextBottomOffset,
                     -it.width,
                     -it.height
                 )
